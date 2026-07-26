@@ -33,7 +33,7 @@ function DemoCard({ demo, index }) {
             rel="noopener noreferrer"
             className="text-xs font-display font-semibold text-white/40 hover:text-cyan-400 transition-colors flex-shrink-0 mt-1"
           >
-            Open ↗
+            Open in Hugging Face ↗
           </a>
         </div>
         <p className="font-body text-sm text-white/50 leading-relaxed mb-4">

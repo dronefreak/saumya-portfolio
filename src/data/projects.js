@@ -31,6 +31,7 @@ export const projects = [
     staticForks: 0,
     links: {
       github: 'https://github.com/dronefreak/VisDrone-dataset-python-toolkit',
+      huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-detection-model-zoo',
       demo: 'https://huggingface.co/spaces/dronefreak/visdrone-aerial-detection',
     },
     featured: true,
@@ -50,6 +51,7 @@ export const projects = [
       github: 'https://github.com/dronefreak/CABiNet',
       paper: 'https://arxiv.org/abs/2011.00993',
       huggingface: 'https://huggingface.co/dronefreak/cabinet-mobilenetv3-small-uavid',
+      demo: 'https://huggingface.co/spaces/dronefreak/uavid-aerial-segmentation',
     },
     featured: true,
     badge: 'Semantic Segmentation',
