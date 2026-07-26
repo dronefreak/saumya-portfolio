@@ -2,7 +2,7 @@
 
 A single-page developer/researcher portfolio. Vite + React 18 + Tailwind CSS + Framer Motion, with a few sections wired to live public APIs (GitHub, Hugging Face, Semantic Scholar) instead of hardcoded numbers.
 
-Built for **saumyasaksena.com** — free to fork and reuse as a template.
+Built for [**saumyasaksena.com**](https://saumyasaksena.com/) — free to fork and reuse as a template.
 
 ## Stack
 
