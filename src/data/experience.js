@@ -1,0 +1,80 @@
+// ─── EDIT THIS FILE to update the career story arc ────────────────────────────
+// Nodes are shown in order. Keep to 4–6 for a readable narrative.
+
+export const story = [
+  {
+    id: 'iisc',
+    company: 'Indian Institute of Science',
+    shortName: 'IISc',
+    role: 'UG Researcher & Research Assistant',
+    location: 'Bangalore, India',
+    period: '2016 – 2018',
+    theme: 'Origin',
+    headline: 'Two threads. One constraint: real-time.',
+    description:
+      'Two threads at IISc: first, a 4-class brain-computer interface for real-time control of fixed-wing and multi-rotor UAVs, with 81.4% classification accuracy on 14-channel EEG using wavelet features and neural networks. Then, real-time obstacle avoidance for autonomous drones in unstructured outdoor environments using dense optical flow on hardware that barely had cycles to spare.',
+    stat: { value: '81.4%', label: 'EEG classification accuracy' },
+    constraint: '<50 ms reaction latency; drone navigation >90% success in unstructured environment tests',
+    tags: ['BCI', 'EEG', 'Optical Flow', 'UAVs', 'Real-time', 'Edge AI', 'Obstacle Avoidance'],
+  },
+  {
+    id: 'aziobot',
+    company: 'Aziobot B.V.',
+    shortName: 'Aziobot',
+    role: 'Robotics & Perception Intern',
+    location: 'Den Bosch, Netherlands',
+    period: '2019',
+    theme: 'Safety Layer',
+    headline: 'First edge AI deployment.',
+    description:
+      'Deep learning semantic understanding for an autonomous cleaning robot. 5+ flooring types identified at 95%+ accuracy to avoid using incorrect materials for scrubbing. Deployed on a Jetson TX2 with TensorRT optimisations for real-time inference.',
+    stat: { value: '95%', label: 'Flooring identification accuracy' },
+    constraint: 'Real-time inference on production hardware',
+    tags: ['Semantic Segmentation', 'ROS', 'Edge AI', 'TensorRT', 'Jetson TX2', 'TensorFlow'],
+  },
+  {
+    id: 'utwente-research',
+    company: 'University of Twente',
+    shortName: 'UTwente',
+    role: 'Graduate Research, MSc Thesis',
+    location: 'Enschede, Netherlands',
+    period: '2020',
+    theme: 'Published Research',
+    headline: 'State-of-the-art on three benchmarks. Two papers.',
+    description:
+      'MSc thesis on low-latency semantic segmentation for embedded devices: a new pipeline with global and local attention modules for efficient context aggregation. Outperformed prior real-time approaches on Cityscapes, UAVid, and AeroScapes. Led directly to two peer-reviewed publications: ICRA 2021 and ISPRS Journal 2021.',
+    stat: { value: '2', label: 'Peer-reviewed publications' },
+    constraint: '63.5 mIOU on UAVid at 15 FPS on Jetson Xavier NX, 2.5× faster than prior SOTA',
+    tags: ['Semantic Segmentation', 'Attention', 'Cityscapes', 'UAVid', 'ICRA', 'ISPRS', 'PyTorch'],
+  },
+  {
+    id: 'ams-osram',
+    company: 'ams-OSRAM AG',
+    shortName: 'ams-OSRAM',
+    role: 'AI & Computer Vision Engineer',
+    location: 'Paris, France',
+    period: '2020 – 2025',
+    theme: 'Edge AI at Scale',
+    headline: 'Five domains. Four hardware targets. One constraint: ship it.',
+    description:
+      'Four years deploying ML across spatial, environmental, health, and interaction sensing, always on constrained hardware. 3D depth via RGB+dToF at 52 FPS on Samsung S20 NPU (<2% MAPE). Lossless 8-bit light estimation with 25× latency reduction on Pixel 6 NPU. Vital-signs: respiration rate and blood pressure on Cortex Mx MCUs, with DNN-based uncertainty, yielding a 20% accuracy gain and 50% memory reduction on BP. PPG-based gesture recognition (4 gestures, >95% accuracy) for smartwatches and AR/VR glasses. Protocol design and data acquisition across 70+ subjects for gesture recognition. 4 patents pending.',
+    stat: { value: '5', label: 'Distinct deployments' },
+    constraint: 'NPU · MCU · Wearable · Mobile · Real-time',
+    tags: ['AR/VR', 'TensorFlow', 'PyTorch', 'Edge AI', 'Computer Vision', 'Deep Learning', 'TF-Lite', 'NPU', 'Cortex Mx', 'Quantisation', 'Gesture Recognition', 'dToF', 'PPG', 'Vital Signs', 'Blood Pressure', 'Respiration Rate'],
+  },
+  {
+    id: 'navya',
+    company: 'Navya Mobility',
+    shortName: 'Navya',
+    role: 'Robotics & Perception Engineer',
+    location: 'Paris, France',
+    period: '2025 – Present',
+    theme: 'Functional Safety',
+    headline: '50 ms. No margin for error.',
+    description:
+      'Safety-layer fusion of LiDAR and Radar via CIP Safety protocol, independent of perception stack failures. Automatic Emergency Braking within a 50 ms control loop. Designing and validating systems toward ASIL-B / PL-D targets for autonomous shuttles operating on regulated public roads.',
+    stat: { value: '50 ms', label: 'AEB control loop' },
+    constraint: 'Targeting ASIL-B / PL-D, regulated public roads',
+    tags: ['ASIL-B', 'CIP Safety', 'LiDAR', 'Radar', 'AEB', 'Functional Safety'],
+  },
+]
