@@ -13,10 +13,10 @@ function fmtCount(n, fallback) {
 }
 
 const ROLES = [
-  'Perception Engineer',
+  'Perception Architect',
   'Robotics Engineer',
   'Functional Safety Engineer',
-  'Embedded AI Engineer',
+  'Embedded AI Architect',
 ]
 
 function useReducedMotionPreference() {
