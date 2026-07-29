@@ -57,6 +57,7 @@ export const publications = [
     semanticScholarLookup: { type: 'doi', id: '10.1109/IRC.2019.00115' },
     links: {
       doi: 'https://doi.org/10.1109/IRC.2019.00115',
+      github: 'https://github.com/dronefreak/MAVNet',
     },
     highlight: false,
   },
