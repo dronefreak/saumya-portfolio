@@ -4,6 +4,7 @@
 // semanticScholarLookup: used by useSemanticScholar to fetch live citation counts
 // githubRepo: optional — shows live star + fork counts on the card
 // hfRepoId: optional — shows live download count for the paper's open-sourced HF model
+// links.huggingface_demo: optional — HF Space showcasing a live demo, shown as a "Demo ↗" pill
 
 export const publications = [
   {
@@ -22,6 +23,7 @@ export const publications = [
       doi: 'https://doi.org/10.1016/j.isprsjprs.2021.06.007',
       github: 'https://github.com/dronefreak/CABiNet',
       huggingface: 'https://huggingface.co/dronefreak/cabinet-mobilenetv3-small-uavid',
+      huggingface_demo: 'https://huggingface.co/spaces/dronefreak/uavid-aerial-segmentation',
     },
     highlight: true,
   },
@@ -42,6 +44,7 @@ export const publications = [
       arxiv: 'https://arxiv.org/abs/2011.00993',
       github: 'https://github.com/dronefreak/CABiNet',
       huggingface: 'https://huggingface.co/dronefreak/cabinet-mobilenetv3-small-uavid',
+      huggingface_demo: 'https://huggingface.co/spaces/dronefreak/uavid-aerial-segmentation',
     },
     highlight: true,
   },

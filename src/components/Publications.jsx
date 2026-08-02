@@ -124,6 +124,16 @@ function PubRow({ pub, index }) {
               HF ↗
             </a>
           )}
+          {pub.links.huggingface_demo && (
+            <a
+              href={pub.links.huggingface_demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+            >
+              Demo ↗
+            </a>
+          )}
         </div>
 
         {/* Live stats row */}
