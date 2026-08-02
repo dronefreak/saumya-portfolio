@@ -108,8 +108,8 @@ export default function Contact() {
   const hf = useHFStats('dronefreak')
 
   const liveDescriptions = {
-    GitHub: `${fmtCount(gh.repoCount, '24')} repos · ${fmtCount(gh.totalStars, '700+')} stars · open to collaboration`,
-    'Hugging Face': `${fmtCount(hf.modelCount, '35+')} models · ${fmtCount(hf.totalDownloads, '0')} downloads · ${fmtCount(hf.datasetCount, '1')} datasets`,
+    GitHub: `${fmtCount(gh.repoCount, '24')} Repos · ${fmtCount(gh.totalStars, '700+')} Stars · Open to collaboration`,
+    'Hugging Face': `${fmtCount(hf.modelCount, '35+')} Models · ${fmtCount(hf.totalDownloads, '0')} Downloads · ${fmtCount(hf.datasetCount, '1')} Datasets · ${fmtCount(hf.spaceCount, '2')} Spaces`,
   }
 
   return (
