@@ -125,8 +125,11 @@ export default function Story() {
             Six years.{' '}
             <span className="text-gradient-cyan">One constraint.</span>
           </h2>
-          <p className="font-body text-base text-white/45 max-w-xl mx-auto leading-relaxed">
+          <p className="font-body text-base text-white/45 max-w-xl mx-auto leading-relaxed mb-4">
             Make it see, make it fast, make it safe.
+          </p>
+          <p className="font-body text-sm text-white/40 max-w-2xl mx-auto leading-relaxed">
+            What I actually care about: compressing models until they run on real edge hardware (pruning, quantization); benchmarks and codebases other people can trust, rerun, and get the same numbers from; and scene understanding for autonomous systems, UAVs first, now self-driving, where real-time and memory limits aren't optional.
           </p>
         </motion.div>
 

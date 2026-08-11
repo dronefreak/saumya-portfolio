@@ -10,6 +10,12 @@ const links = [
   { label: 'Contact', href: '#contact' },
 ]
 
+const DownloadIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+  </svg>
+)
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -63,13 +69,24 @@ export default function Nav() {
         </ul>
 
         {/* Desktop CTA */}
-        <a
-          href="#contact"
-          onClick={e => handleLink(e, '#contact')}
-          className="hidden md:inline-flex btn-secondary text-sm py-2 px-4"
-        >
-          Get in touch
-        </a>
+        <div className="hidden md:flex items-center gap-3">
+          <a
+            href="assets/SaumyaSAKSENA_resume_07042026.pdf"
+            download
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-cyan-400 hover:border-cyan-400/40 transition-colors duration-200 text-sm font-body px-3.5 py-2"
+            aria-label="Download resume (PDF)"
+            title="Download resume"
+          >
+            <DownloadIcon /> Resume
+          </a>
+          <a
+            href="#contact"
+            onClick={e => handleLink(e, '#contact')}
+            className="btn-secondary text-sm py-2 px-4"
+          >
+            Get in touch
+          </a>
+        </div>
 
         {/* Mobile hamburger */}
         <button
@@ -105,6 +122,15 @@ export default function Nav() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a
+                  href="assets/SaumyaSAKSENA_resume_07042026.pdf"
+                  download
+                  className="flex items-center gap-2 font-body text-base text-white/70 hover:text-white py-1"
+                >
+                  <DownloadIcon /> Download resume
+                </a>
+              </li>
               <li>
                 <a
                   href="#contact"
