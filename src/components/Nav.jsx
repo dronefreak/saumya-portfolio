@@ -71,7 +71,7 @@ export default function Nav() {
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
           <a
-            href="assets/SaumyaSAKSENA_resume_07042026.pdf"
+            href="/resume.pdf"
             download
             className="inline-flex items-center gap-1.5 rounded-full border border-white/15 text-white/60 hover:text-cyan-400 hover:border-cyan-400/40 transition-colors duration-200 text-sm font-body px-3.5 py-2"
             aria-label="Download resume (PDF)"
@@ -124,7 +124,7 @@ export default function Nav() {
               ))}
               <li>
                 <a
-                  href="assets/SaumyaSAKSENA_resume_07042026.pdf"
+                  href="/resume.pdf"
                   download
                   className="flex items-center gap-2 font-body text-base text-white/70 hover:text-white py-1"
                 >
