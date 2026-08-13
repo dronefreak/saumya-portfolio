@@ -30,4 +30,13 @@ export const demos = [
     spaceUrl: 'https://huggingface.co/spaces/dronefreak/clearview-derain-demo',
     tags: ['Image Restoration', 'Deraining', 'DNN'],
   },
+  {
+    id: 'histoformer',
+    title: 'Histoformer: End-to-End Weather Removal',
+    description:
+      'Unofficial demo of dronefreak/Histoformer, an easy-to-use mirror of Histoformer (ECCV 2024) by Sun, Ren, Gao, Wang, and Cao. (paper, official repo). A single model removes rain, raindrops, and snow from a picture.',
+    embedUrl: 'https://dronefreak-histoformer-weather-restoration.hf.space',
+    spaceUrl: 'https://huggingface.co/spaces/dronefreak/histoformer-weather-restoration',
+    tags: ['Image Restoration', 'Deraining', 'Desnowing', 'DNN'],
+  },
 ]
