@@ -80,6 +80,19 @@ function ProjectCard({ project, index }) {
 
   const catColor = categoryColors[project.category] || 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20'
 
+  const badgeColors = {
+    'Action Recognition': 'text-orange-400 bg-orange-400/10 border-orange-400/30',
+    'Object Detection': 'text-blue-400 bg-blue-400/10 border-blue-400/30',
+    'Semantic Segmentation': 'text-teal-400 bg-teal-400/10 border-teal-400/30',
+    'Instance Segmentation': 'text-pink-400 bg-pink-400/10 border-pink-400/30',
+    'Depth Estimation': 'text-indigo-400 bg-indigo-400/10 border-indigo-400/30',
+    'Object Tracking': 'text-lime-400 bg-lime-400/10 border-lime-400/30',
+    'Flight Control': 'text-sky-400 bg-sky-400/10 border-sky-400/30',
+    'Hugging Face': 'text-amber-400 bg-amber-400/10 border-amber-400/30',
+  }
+
+  const badgeColor = badgeColors[project.badge] || 'text-amber-400 bg-amber-400/10 border-amber-400/30'
+
   return (
     <motion.div
       ref={ref}
@@ -94,7 +107,7 @@ function ProjectCard({ project, index }) {
           {project.category}
         </span>
         {project.badge && (
-          <span className="font-display font-bold text-xs text-amber-400 border border-amber-400/30 bg-amber-400/10 rounded-full px-3 py-1">
+          <span className={`font-display font-bold text-xs border rounded-full px-3 py-1 ${badgeColor}`}>
             {project.badge}
           </span>
         )}
