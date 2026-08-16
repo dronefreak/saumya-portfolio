@@ -15,6 +15,7 @@ export const projects = [
     staticForks: 0,
     links: {
       github: 'https://github.com/dronefreak/human-action-classification',
+      huggingface: 'https://huggingface.co/collections/dronefreak/human-action-classification-model-zoo',
     },
     featured: true,
     badge: 'Action Recognition',
@@ -132,10 +133,10 @@ export const projects = [
     githubRepo: null,
     staticStars: null,
     staticForks: null,
-    hfRepoId: 'dronefreak/UAVid-2020',  // dataset where the download count lives
-    hfRepoType: 'dataset',
-    hfDownloads: 0,
-    hfLikes: 0,
+    hfRepoId: null,
+    hfCollectionSlug: 'dronefreak/uavid-semantic-segmentation-model-zoo',  // sums downloads across all models in the zoo
+    hfDownloads: 392, // fallback while live collection data loads
+    hfLikes: 21,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/uavid-semantic-segmentation-model-zoo',
     },
@@ -152,9 +153,9 @@ export const projects = [
     githubRepo: null,
     staticStars: null,
     staticForks: null,
-    hfRepoId: 'dronefreak/visdrone-yolov11x',  // dataset where the download count lives
-    hfRepoType: 'model',
-    hfDownloads: 0,
+    hfRepoId: null,
+    hfCollectionSlug: 'dronefreak/visdrone-detection-model-zoo',  // sums downloads across all models in the zoo
+    hfDownloads: 2678, // fallback while live collection data loads
     hfLikes: 0,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-detection-model-zoo',

@@ -131,6 +131,52 @@ export function useHFStats(username) {
   return stats
 }
 
+// ─── Hook: aggregate stats for a HF Collection (fixed list of repos) ──────────
+//
+// Usage:
+//   const { downloads, likes, modelCount, loaded } = useHFCollection('dronefreak/visdrone-detection-model-zoo')
+//
+// Collections aren't paginated by the API, so this is a single fetch —
+// downloads/likes are summed across every item (model/dataset/space) in it.
+
+export function useHFCollection(collectionSlug, staticDownloads = 0, staticLikes = 0) {
+  const [stats, setStats] = useState({
+    downloads: staticDownloads,
+    likes: staticLikes,
+    modelCount: null,
+    loaded: false,
+  })
+
+  useEffect(() => {
+    if (!collectionSlug) return
+
+    const cacheKey = `hf_collection_${collectionSlug.replace('/', '_')}`
+    const cached = getCached(cacheKey)
+    if (cached) {
+      setStats({ ...cached, loaded: true })
+      return
+    }
+
+    fetch(`${HF_API}/collections/${collectionSlug}`)
+      .then(r => r.json())
+      .then(data => {
+        const items = data.items || []
+        const fresh = {
+          downloads: items.reduce((acc, item) => acc + (item.downloads || 0), 0),
+          likes: items.reduce((acc, item) => acc + (item.likes || 0), 0),
+          modelCount: items.length,
+        }
+        setCache(cacheKey, fresh)
+        setStats({ ...fresh, loaded: true })
+      })
+      .catch(() => {
+        setStats(prev => ({ ...prev, loaded: true }))
+      })
+  }, [collectionSlug])
+
+  return stats
+}
+
 // ─── Hook: stats for a single model or dataset ────────────────────────────────
 //
 // Usage:

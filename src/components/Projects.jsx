@@ -2,7 +2,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { projects } from '../data/projects'
 import { useGitHubRepo } from '../hooks/useGitHubStats'
-import { useHFModel } from '../hooks/useHFStats'
+import { useHFModel, useHFCollection } from '../hooks/useHFStats'
 
 const StarIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -20,6 +20,12 @@ const ForkIcon = () => (
 const DownloadIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+  </svg>
+)
+
+const HeartIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 21s-6.7-4.35-9.33-8.2C.98 10.2 1.4 6.6 4.2 4.9c2.3-1.4 5.1-.7 6.8 1.3.4.5.7 1 1 1.5.3-.5.6-1 1-1.5 1.7-2 4.5-2.7 6.8-1.3 2.8 1.7 3.22 5.3 1.53 7.9C18.7 16.65 12 21 12 21Z"/>
   </svg>
 )
 
@@ -49,14 +55,20 @@ function ProjectCard({ project, index }) {
     project.staticForks
   )
 
-  // HuggingFace stats — hook is a no-op when hfRepoId is null
-  const hf = useHFModel(
+  // HuggingFace stats — single-repo hook is a no-op when hfRepoId is null,
+  // collection hook is a no-op when hfCollectionSlug is null
+  const hfSingle = useHFModel(
     project.hfRepoId || null,
     project.hfRepoType || 'model',
     0,
+    project.hfDownloads || 0
+  )
+  const hfCollection = useHFCollection(
+    project.hfCollectionSlug || null,
     project.hfDownloads || 0,
     project.hfLikes || 0
   )
+  const hf = project.hfCollectionSlug ? hfCollection : hfSingle
 
   const categoryColors = {
     'Computer Vision': 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
@@ -122,13 +134,20 @@ function ProjectCard({ project, index }) {
             </>
           )}
 
-          {/* HuggingFace downloads — live via useHFModel */}
-          {project.hfRepoId && (
-            <span className={`flex items-center gap-1.5 text-white/40 text-xs font-body ${
-              !hf.loaded ? 'animate-pulse opacity-60' : ''
-            }`}>
-              <DownloadIcon /> {hf.downloads?.toLocaleString()}
-            </span>
+          {/* HuggingFace downloads + likes — live via useHFModel or useHFCollection */}
+          {(project.hfRepoId || project.hfCollectionSlug) && (
+            <>
+              <span className={`flex items-center gap-1.5 text-white/40 text-xs font-body ${
+                !hf.loaded ? 'animate-pulse opacity-60' : ''
+              }`}>
+                <DownloadIcon /> {hf.downloads?.toLocaleString()}
+              </span>
+              <span className={`flex items-center gap-1.5 text-white/40 text-xs font-body ${
+                !hf.loaded ? 'animate-pulse opacity-60' : ''
+              }`}>
+                <HeartIcon /> {hf.likes?.toLocaleString()}
+              </span>
+            </>
           )}
         </div>
 
