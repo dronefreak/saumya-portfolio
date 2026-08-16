@@ -5,7 +5,7 @@
 export const demos = [
   {
     id: 'visdrone',
-    title: 'VisDrone Aerial Object Detection',
+    title: 'Aerial Object Detection',
     description:
       'Upload a drone image or video frame and detect objects across 10 categories using models from the VisDrone benchmark model zoo. YOLO variants running on Hugging Face ZeroGPU.',
     embedUrl: 'https://dronefreak-visdrone-aerial-detection.hf.space',
@@ -14,7 +14,7 @@ export const demos = [
   },
   {
     id: 'uavid',
-    title: 'UAVid Aerial Semantic Segmentation',
+    title: 'Aerial Semantic Segmentation',
     description:
       'Upload a drone image or video frame and segment images across 8 categories using models from the UAVid benchmark model zoo. Model variants running on Hugging Face ZeroGPU.',
     embedUrl: 'https://dronefreak-uavid-aerial-segmentation.hf.space',
@@ -32,7 +32,7 @@ export const demos = [
   },
   {
     id: 'histoformer',
-    title: 'Histoformer: End-to-End Weather Removal',
+    title: 'Unified Image Desnowing and Dehazing',
     description:
       'Unofficial demo of dronefreak/Histoformer, an easy-to-use mirror of Histoformer (ECCV 2024) by Sun, Ren, Gao, Wang, and Cao. (paper, official repo). A single model removes rain, raindrops, and snow from a picture.',
     embedUrl: 'https://dronefreak-histoformer-weather-restoration.hf.space',
