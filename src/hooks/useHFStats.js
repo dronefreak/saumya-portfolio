@@ -27,11 +27,28 @@ function setCache(key, value) {
 // Downloads on Spaces are not exposed by the API — only models and datasets have them.
 // Likes are available on models, datasets, and spaces.
 
+// HF paginates via a `Link` response header (rel="next"), not a page param —
+// follow it until exhausted so counts aren't silently capped at one page.
+async function fetchAllHF(url) {
+  let all = []
+  let next = url
+  while (next) {
+    const res = await fetch(next)
+    if (!res.ok) throw new Error(`HF API ${res.status}`)
+    all = all.concat(await res.json())
+
+    const link = res.headers.get('Link')
+    const match = link && link.match(/<([^>]+)>;\s*rel="next"/)
+    next = match ? match[1] : null
+  }
+  return all
+}
+
 async function fetchHFAggregate(username) {
   const [models, datasets, spaces] = await Promise.all([
-    fetch(`${HF_API}/models?author=${username}&limit=100`).then(r => r.json()),
-    fetch(`${HF_API}/datasets?author=${username}&limit=100`).then(r => r.json()),
-    fetch(`${HF_API}/spaces?author=${username}&limit=100`).then(r => r.json()),
+    fetchAllHF(`${HF_API}/models?author=${username}&limit=100`),
+    fetchAllHF(`${HF_API}/datasets?author=${username}&limit=100`),
+    fetchAllHF(`${HF_API}/spaces?author=${username}&limit=100`),
   ])
 
   const totalLikes =
