@@ -32,7 +32,7 @@ export const demos = [
   },
   {
     id: 'histoformer',
-    title: 'Unified Image Desnowing and Dehazing',
+    title: 'Joint Desnowing and Dehazing',
     description:
       'Unofficial demo of dronefreak/Histoformer, an easy-to-use mirror of Histoformer (ECCV 2024) by Sun, Ren, Gao, Wang, and Cao. (paper, official repo). A single model removes rain, raindrops, and snow from a picture.',
     embedUrl: 'https://dronefreak-histoformer-weather-restoration.hf.space',
