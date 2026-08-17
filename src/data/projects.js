@@ -7,7 +7,7 @@ export const projects = [
     id: 'human-action',
     title: 'Human Action Classification',
     description:
-      'Pose-based (MediaPipe) and video-based (3D CNN) action classification with 100+ architecture variants. Real-time inference pipeline with modular design for rapid benchmarking.',
+      'Pose- and video-based action classification (MediaPipe, 3D CNN), 100+ architecture variants, real-time modular benchmarking pipeline.',
     tags: ['PyTorch', 'MediaPipe', '3D CNN', 'UCF-101'],
     category: 'Computer Vision',
     githubRepo: 'human-action-classification',
@@ -24,7 +24,7 @@ export const projects = [
     id: 'visdrone-toolkit',
     title: 'VisDrone Detection Toolkit',
     description:
-      'Aerial object detection toolkit covering 33 models (Torchvision + YOLO), with training pipelines, benchmarking, annotation conversion, and video inference built-in.',
+      '33 aerial detection models (Torchvision + YOLO) with training, benchmarking, annotation conversion, and video inference built in.',
     tags: ['YOLO', 'UAVs', 'Benchmark'],
     category: 'Perception',
     githubRepo: 'VisDrone-dataset-python-toolkit',
@@ -42,7 +42,7 @@ export const projects = [
     id: 'cabinet',
     title: 'CABiNet (ICRA 2021)',
     description:
-      'Context Aggregation Network for low-latency semantic segmentation. Published at ICRA 2021. Efficient architecture designed for real-time performance on embedded platforms.',
+      'Context Aggregation Network for low-latency semantic segmentation, published at ICRA 2021, built for real-time inference on embedded hardware.',
     tags: ['ICRA 2021', 'MobileNetv3', 'Real-time', 'UAVs'],
     category: 'Research',
     githubRepo: 'CABiNet',
@@ -61,7 +61,7 @@ export const projects = [
     id: 'tello-segmentation',
     title: 'UAVs: Instance Segmentation',
     description:
-      'Modern instance segmentation for DJI Tello drones using YOLOv8 and Detectron2. Real-time performance with modular design and autonomous target tracking.',
+      'Real-time instance segmentation for DJI Tello drones (YOLOv8, Detectron2) with autonomous target tracking.',
     tags: ['YOLOv8', 'Detectron2', 'DJI Tello'],
     category: 'Perception',
     githubRepo: 'dji-tello-object-detection-segmentation',
@@ -77,7 +77,7 @@ export const projects = [
     id: 'tello-depth',
     title: 'UAVs: Collision Avoidance',
     description:
-      'Real-time monocular depth estimation for DJI Tello drone collision avoidance. TF2.x PyDNet + MiDaS implementation with autonomous navigation and comprehensive test suite.',
+      'Real-time monocular depth estimation for DJI Tello collision avoidance (TF2.x PyDNet + MiDaS) with autonomous navigation.',
     tags: ['Depth Estimation', 'PyDNet', 'MiDaS'],
     category: 'Perception',
     githubRepo: 'dji-tello-collision-avoidance-pydnet',
@@ -93,7 +93,7 @@ export const projects = [
     id: 'tello-tracking',
     title: 'UAVs: Object Tracking',
     description:
-      'Modern autonomous drone tracking using YOLOv8 deep learning and PID control for DJI Tello drones with real-time object detection and multi-target tracking.',
+      'Autonomous DJI Tello tracking combining YOLOv8 detection with PID control for real-time multi-target tracking.',
     tags: ['YOLOv8', 'PID Control', 'DJI Tello'],
     category: 'Perception',
     githubRepo: 'dji-tello-target-tracking',
@@ -110,7 +110,7 @@ export const projects = [
     id: 'neural-flight',
     title: 'UAVs: EEG Flight Control',
     description:
-  'Neural control framework for drones using motor imagery EEG classification. 73% cross-subject accuracy with PyTorch — cross-subject being the hard version, where the model generalises to users it has never seen. Enables hands-free drone control through imagined hand and feet movements.',
+      'Motor-imagery EEG classification for hands-free drone control, 73% cross-subject accuracy (generalizing to unseen users) with PyTorch.',
     tags: ['EEG', 'Motor Imagery', 'PyTorch'],
     category: 'Brain-Computer Interface',
     githubRepo: 'NeuralFlight',
@@ -127,7 +127,7 @@ export const projects = [
     id: 'uavid-zoo',
     title: 'UAVid Model Zoo',
     description:
-      'Open-source model zoo on Hugging Face: YOLO26 (nano → XL) and CABiNet variants trained on UAVid. 1.9K+ dataset downloads. Plug-and-play for aerial segmentation benchmarking.',
+      'YOLO26 (nano to XL) and CABiNet variants trained on UAVid, 1.9K+ dataset downloads, plug-and-play for segmentation benchmarking.',
     tags: ['YOLO26', 'UAVid', 'Semantic Segmentation'],
     category: 'Open Source',
     githubRepo: null,
@@ -147,7 +147,7 @@ export const projects = [
     id: 'visdrone-zoo',
     title: 'VisDrone Model Zoo',
     description:
-      'A collection of YOLO-based object detection models fine-tuned on the VisDrone benchmark for aerial imagery.',
+      'YOLO-based detection models fine-tuned on VisDrone for aerial imagery, spanning YOLOv8 through YOLO26.',
     tags: ['YOLO26', 'VisDrone', 'Object Detection'],
     category: 'Open Source',
     githubRepo: null,
@@ -159,6 +159,27 @@ export const projects = [
     hfLikes: 0,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-detection-model-zoo',
+    },
+    featured: true,
+    badge: 'Hugging Face',
+  },
+  {
+    id: 'adverse-weather-zoo',
+    title: 'Adverse Weather Removal Zoo',
+    description:
+      '9 end-to-end weather-removal models (UNet, NAFNet, Restormer, ResNetX-UNet, Histoformer) plus 4 curated rain-removal datasets, single-pass restoration.',
+    tags: ['Image Restoration', 'Derain', 'NAFNet', 'Restormer'],
+    category: 'Open Source',
+    githubRepo: null,
+    staticStars: null,
+    staticForks: null,
+    hfRepoId: null,
+    hfCollectionSlug: 'dronefreak/end-to-end-adverse-weather-removal',  // sums downloads across all models + datasets in the zoo
+    hfDownloads: 4752, // fallback while live collection data loads
+    hfLikes: 13,
+    links: {
+      huggingface: 'https://huggingface.co/collections/dronefreak/end-to-end-adverse-weather-removal',
+      demo: 'https://huggingface.co/spaces/dronefreak/histoformer-weather-restoration',
     },
     featured: true,
     badge: 'Hugging Face',
