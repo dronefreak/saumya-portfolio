@@ -79,7 +79,7 @@ const socialLinks = [
     ),
   },
   {
-    label: 'Scholar',
+    label: 'Google Scholar',
     href: 'https://scholar.google.com/citations?user=BxQ0KDEAAAAJ',
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -429,32 +429,6 @@ export default function Hero() {
               </a>
             </motion.div>
 
-            {/* Social links */}
-            <motion.div
-              className="flex gap-4 items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.55 }}
-            >
-              {socialLinks.map(link => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={link.label}
-                  className="group text-white/35 hover:text-cyan-400 transition-colors duration-200"
-                >
-                  {link.label === 'HuggingFace' ? (
-                    <span className="block opacity-45 group-hover:opacity-100 transition-opacity duration-200">
-                      {link.icon}
-                    </span>
-                  ) : (
-                    link.icon
-                  )}
-                </a>
-              ))}
-            </motion.div>
           </div>
 
           {/* Right: Radar viz */}
@@ -467,6 +441,39 @@ export default function Hero() {
             <RadarViz />
           </motion.div>
         </div>
+
+        {/* Social links */}
+        <motion.div
+          className="mt-12 flex flex-nowrap justify-center items-center w-full overflow-x-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.55 }}
+        >
+          {socialLinks.map((link, i) => (
+            <Fragment key={link.label}>
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-1.5 px-1.5 whitespace-nowrap text-white/45 hover:text-cyan-400 transition-colors duration-200"
+              >
+                <span
+                  className={
+                    link.label === 'HuggingFace'
+                      ? 'block opacity-45 group-hover:opacity-100 transition-opacity duration-200'
+                      : 'block'
+                  }
+                >
+                  {link.icon}
+                </span>
+                <span className="font-body text-xs sm:text-sm">{link.label}</span>
+              </a>
+              {i < socialLinks.length - 1 && (
+                <span className="text-white/20 select-none" aria-hidden="true">|</span>
+              )}
+            </Fragment>
+          ))}
+        </motion.div>
 
         {/* Stats row */}
         <motion.div
