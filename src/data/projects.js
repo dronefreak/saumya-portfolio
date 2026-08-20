@@ -184,4 +184,81 @@ export const projects = [
     featured: true,
     badge: 'Hugging Face',
   },
+  {
+    id: 'seadronessee-zoo',
+    title: 'SeaDronesSee Model Zoo',
+    description:
+      'YOLO and RF-DETR detection models fine-tuned on SeaDronesSee for maritime UAV imagery, spanning YOLOv8 through YOLO26.',
+    tags: ['YOLO26', 'RF-DETR', 'Maritime UAV'],
+    category: 'Open Source',
+    githubRepo: null,
+    staticStars: null,
+    staticForks: null,
+    hfRepoId: null,
+    hfCollectionSlug: 'dronefreak/seadronessee-object-detection-model-zoo',
+    hfDownloads: 3460, // fallback while live collection data loads
+    hfLikes: 19,
+    links: {
+      huggingface: 'https://huggingface.co/collections/dronefreak/seadronessee-object-detection-model-zoo',
+    },
+    featured: true,
+    badge: 'Hugging Face',
+  },
+  {
+    id: 'lisa-zoo',
+    title: 'LISA Traffic Lights Model Zoo',
+    description:
+      'YOLO and RF-DETR detection models fine-tuned on LISA for autonomous-driving traffic-light detection.',
+    tags: ['YOLO26', 'RF-DETR', 'Autonomous Driving'],
+    category: 'Open Source',
+    githubRepo: null,
+    staticStars: null,
+    staticForks: null,
+    hfRepoId: null,
+    hfCollectionSlug: 'dronefreak/lisa-traffic-lights-detection-model-zoo',
+    hfDownloads: 1164, // fallback while live collection data loads
+    hfLikes: 20,
+    links: {
+      huggingface: 'https://huggingface.co/collections/dronefreak/lisa-traffic-lights-detection-model-zoo',
+    },
+    featured: true,
+    badge: 'Hugging Face',
+  },
+  {
+    id: 'exdark-zoo',
+    title: 'ExDark Model Zoo',
+    description:
+      '19 YOLO and RF-DETR detection models fine-tuned on ExDark for robust nighttime and low-light object detection.',
+    tags: ['YOLO26', 'RF-DETR', 'Low-Light Detection'],
+    category: 'Open Source',
+    githubRepo: null,
+    staticStars: null,
+    staticForks: null,
+    hfRepoId: null,
+    hfCollectionSlug: 'dronefreak/exdark-object-detection-model-zoo',
+    hfDownloads: 1905, // fallback while live collection data loads
+    hfLikes: 18,
+    links: {
+      huggingface: 'https://huggingface.co/collections/dronefreak/exdark-object-detection-model-zoo',
+    },
+    featured: true,
+    badge: 'Hugging Face',
+  },
+  {
+    id: 'more-model-zoos',
+    title: 'More Model Zoos',
+    description:
+      'DetectionBench standardizes evaluation of YOLO/RF-DETR/CABiNet beyond COCO, powering 11 fine-tuned model zoos across UAV, maritime, traffic-light, agricultural, and low-light detection.',
+    tags: ['YOLO26', 'RF-DETR', 'CABiNet'],
+    category: 'Open Source',
+    githubRepo: 'DetectionBench',
+    staticStars: 6,
+    staticForks: 3,
+    links: {
+      github: 'https://github.com/dronefreak/DetectionBench',
+      huggingface: 'https://huggingface.co/dronefreak/collections',
+    },
+    featured: true,
+    badge: 'Hugging Face',
+  },
 ]

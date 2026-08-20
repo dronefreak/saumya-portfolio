@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { publications, patents, authorStats } from '../data/publications'
 import { useSemanticScholar } from '../hooks/useSemanticScholar'
 import { useGitHubRepo } from '../hooks/useGitHubStats'
-import { useHFModel } from '../hooks/useHFStats'
+import { useHFModel, useHFCollection } from '../hooks/useHFStats'
 
 const CitationIcon = () => (
   <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
@@ -30,7 +30,36 @@ const DownloadIcon = () => (
   </svg>
 )
 
-function PubRow({ pub, index }) {
+const HeartIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 21s-6.7-4.35-9.33-8.2C.98 10.2 1.4 6.6 4.2 4.9c2.3-1.4 5.1-.7 6.8 1.3.4.5.7 1 1 1.5.3-.5.6-1 1-1.5 1.7-2 4.5-2.7 6.8-1.3 2.8 1.7 3.22 5.3 1.53 7.9C18.7 16.65 12 21 12 21Z"/>
+  </svg>
+)
+
+const venueTypeMeta = {
+  journal: { label: 'Journal', className: 'text-blue-400 border-blue-400/30 bg-blue-400/10' },
+  conference: { label: 'Conference', className: 'text-amber-400 border-amber-400/30 bg-amber-400/10' },
+  preprint: { label: 'arXiv', className: 'text-fuchsia-400 border-fuchsia-400/30 bg-fuchsia-400/10' },
+}
+
+const venueType = t => venueTypeMeta[t] || venueTypeMeta.preprint
+
+// One bright color per conference/journal/venue "family" (ISPRS, ICRA, IRC, IFAC, arXiv, ...)
+// so e.g. IRC 2018 and IRC 2019 read as the same venue at a glance.
+const venueNameColors = {
+  ISPRS: 'text-teal-400 border-teal-400/30 bg-teal-400/10',
+  ICRA: 'text-rose-400 border-rose-400/30 bg-rose-400/10',
+  IRC: 'text-lime-400 border-lime-400/30 bg-lime-400/10',
+  IFAC: 'text-sky-400 border-sky-400/30 bg-sky-400/10',
+  arXiv: 'text-fuchsia-400 border-fuchsia-400/30 bg-fuchsia-400/10',
+}
+
+const venueNameClass = venueShort => {
+  const family = (venueShort || '').replace(/\s*\d{4}$/, '').trim()
+  return venueNameColors[family] || 'text-cyan-400 border-cyan-400/30 bg-cyan-400/10'
+}
+
+function PubCard({ pub, index }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, amount: 0.3 })
 
@@ -41,171 +70,227 @@ function PubRow({ pub, index }) {
   const gh = useGitHubRepo('dronefreak', pub.githubRepo || null, 0, 0)
 
   // HF model downloads — no-op if hfRepoId is absent
-  const hf = useHFModel(pub.hfRepoId || null, 'model', 0, 0)
+  const hfSingle = useHFModel(pub.hfRepoId || null, 'model', 0, 0)
+
+  // If hfCollectionSlug is set, show the model zoo's aggregate downloads instead
+  // of this one repo's — e.g. CABiNet's downloads shown as the whole UAVid zoo total.
+  const hfCollection = useHFCollection(pub.hfCollectionSlug || null, 0, 0)
+  const hf = pub.hfCollectionSlug ? hfCollection : hfSingle
 
   const hasStats = pub.semanticScholarLookup || pub.githubRepo || pub.hfRepoId
 
   return (
     <motion.div
       ref={ref}
-      className={`glass-card p-6 flex flex-col md:flex-row md:items-start gap-5 glass-card-hover ${pub.highlight ? '' : ''}`}
+      className="glass-card glass-card-hover p-6 flex flex-col h-full"
       style={pub.highlight ? { borderColor: 'rgba(245,158,11,0.25)' } : {}}
-      initial={{ opacity: 0, x: -20 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.07 }}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay: (index % 2) * 0.08 }}
     >
-      {/* Year + venue column */}
-      <div className="flex-shrink-0 flex md:flex-col items-center md:items-end gap-3 md:gap-1 md:w-28 md:pt-0.5">
-        {/* <span className="font-display font-bold text-sm text-cyan-400">{pub.year}</span> */}
-        <span className={`font-body text-xs px-2.5 py-1 rounded-full border text-center ${
-          pub.venueType === 'journal'
-            ? 'text-cyan-400 border-cyan-400/30 bg-cyan-400/10'
-            : pub.venueType === 'conference'
-            ? 'text-amber-400 border-amber-400/30 bg-amber-400/10'
-            : 'text-white/40 border-white/10'
-        }`}>
+      {/* Top row: venue-type badge + short venue/year */}
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <span className={`font-display font-bold text-[10px] rounded-full px-2.5 py-1 uppercase tracking-wide border ${venueType(pub.venueType).className}`}>
+          {venueType(pub.venueType).label}
+        </span>
+        <span className={`font-display font-bold text-[10px] rounded-full px-2.5 py-1 uppercase tracking-wide border ${venueNameClass(pub.venueShort || pub.venue)}`}>
           {pub.venueShort || pub.venue}
         </span>
-        {pub.note && (
-          <span className="font-body text-[10px] text-white/25 text-right leading-snug hidden md:block">
-            {pub.note}
-          </span>
+      </div>
+
+      {/* Title */}
+      <h3 className={`font-display font-bold text-lg leading-snug mb-3 ${pub.highlight ? 'text-white' : 'text-white/85'}`}>
+        {pub.title}
+      </h3>
+
+      {/* Authors */}
+      <p className="font-body text-sm text-white/40 leading-relaxed mb-5 flex-1">
+        {pub.authors}
+      </p>
+
+      {/* Links */}
+      <div className="flex gap-2 flex-wrap mb-5">
+        {pub.links.doi && (
+          <a
+            href={pub.links.doi}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+          >
+            DOI ↗
+          </a>
+        )}
+        {pub.links.arxiv && (
+          <a
+            href={pub.links.arxiv}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+          >
+            arXiv ↗
+          </a>
+        )}
+        {pub.links.github && (
+          <a
+            href={pub.links.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+          >
+            Code ↗
+          </a>
+        )}
+        {pub.links.huggingface && (
+          <a
+            href={pub.links.huggingface}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+          >
+            HF ↗
+          </a>
+        )}
+        {pub.links.huggingface_demo && (
+          <a
+            href={pub.links.huggingface_demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+          >
+            Demo ↗
+          </a>
         )}
       </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <h3 className={`font-display font-semibold text-base leading-snug mb-2 ${pub.highlight ? 'text-white' : 'text-white/85'}`}>
-          {pub.title}
-        </h3>
-        <p className="font-body text-sm text-white/40 mb-4 leading-relaxed">
-          {pub.authors}
-        </p>
+      {/* Live stats row */}
+      {hasStats && (
+        <div className="flex items-center gap-4 flex-wrap pt-4 border-t border-white/[0.06] mt-auto">
+          {/* Citations */}
+          {pub.semanticScholarLookup && (
+            <span className={`flex items-center gap-1.5 text-white/40 text-xs font-body ${
+              !s2.loaded ? 'animate-pulse opacity-60' : ''
+            }`}>
+              <CitationIcon />
+              {s2.citations !== null
+                ? `${s2.citations.toLocaleString()} citations`
+                : s2.loaded ? 'N/A' : 'citations'
+              }
+            </span>
+          )}
 
-        {/* Links */}
-        <div className="flex gap-3 flex-wrap mb-4">
-          {pub.links.doi && (
-            <a
-              href={pub.links.doi}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
-            >
-              DOI ↗
-            </a>
-          )}
-          {pub.links.arxiv && (
-            <a
-              href={pub.links.arxiv}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
-            >
-              arXiv ↗
-            </a>
-          )}
-          {pub.links.github && (
+          {/* GitHub stars */}
+          {pub.githubRepo && gh.stars > 0 && (
             <a
               href={pub.links.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+              className={`flex items-center gap-1.5 text-white/40 text-xs font-body hover:text-cyan-400 transition-colors duration-200 ${
+                !gh.loaded ? 'animate-pulse opacity-60' : ''
+              }`}
             >
-              Code ↗
+              <StarIcon />
+              {gh.stars?.toLocaleString()} GitHub stars
             </a>
           )}
-          {pub.links.huggingface && (
+
+          {/* GitHub forks */}
+          {pub.githubRepo && gh.forks > 0 && (
+            <span className={`flex items-center gap-1.5 text-white/40 text-xs font-body ${
+              !gh.loaded ? 'animate-pulse opacity-60' : ''
+            }`}>
+              <ForkIcon />
+              {gh.forks?.toLocaleString()} GitHub forks
+            </span>
+          )}
+
+          {/* HF open-sourced model downloads — collection aggregate when hfCollectionSlug is set */}
+          {pub.hfRepoId && hf.downloads > 0 && (
             <a
-              href={pub.links.huggingface}
+              href={pub.hfCollectionSlug
+                ? `https://huggingface.co/collections/${pub.hfCollectionSlug}`
+                : pub.links.huggingface}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+              className={`flex items-center gap-1.5 text-white/40 text-xs font-body hover:text-cyan-400 transition-colors duration-200 ${
+                !hf.loaded ? 'animate-pulse opacity-60' : ''
+              }`}
             >
-              HF ↗
+              <DownloadIcon />
+              {hf.downloads?.toLocaleString()} HF downloads
             </a>
           )}
-          {pub.links.huggingface_demo && (
+
+          {/* HF likes — collection aggregate when hfCollectionSlug is set */}
+          {pub.hfRepoId && hf.likes > 0 && (
             <a
-              href={pub.links.huggingface_demo}
+              href={pub.hfCollectionSlug
+                ? `https://huggingface.co/collections/${pub.hfCollectionSlug}`
+                : pub.links.huggingface}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+              className={`flex items-center gap-1.5 text-white/40 text-xs font-body hover:text-cyan-400 transition-colors duration-200 ${
+                !hf.loaded ? 'animate-pulse opacity-60' : ''
+              }`}
             >
-              Demo ↗
+              <HeartIcon />
+              {hf.likes?.toLocaleString()} HF likes
             </a>
           )}
         </div>
+      )}
+    </motion.div>
+  )
+}
 
-        {/* Live stats row */}
-        {hasStats && (
-          <div className="flex items-center gap-4 pt-3 border-t border-white/[0.05]">
-            {/* Citations */}
-            {pub.semanticScholarLookup && (
-              <span className={`flex items-center gap-1.5 text-white/35 text-xs font-body ${
-                !s2.loaded ? 'animate-pulse opacity-50' : ''
-              }`}>
-                <CitationIcon />
-                {s2.citations !== null
-                  ? `${s2.citations.toLocaleString()} citations`
-                  : s2.loaded ? 'N/A' : 'citations'
-                }
-              </span>
-            )}
+function PatentCard({ patent, index }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.3 })
 
-            {/* GitHub stars */}
-            {pub.githubRepo && gh.stars > 0 && (
-              <a
-                href={pub.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center gap-1.5 text-white/35 text-xs font-body hover:text-cyan-400 transition-colors duration-200 ${
-                  !gh.loaded ? 'animate-pulse opacity-50' : ''
-                }`}
-              >
-                <StarIcon />
-                {gh.stars?.toLocaleString()} stars
-              </a>
-            )}
-
-            {/* GitHub forks */}
-            {pub.githubRepo && gh.forks > 0 && (
-              <span className={`flex items-center gap-1.5 text-white/35 text-xs font-body ${
-                !gh.loaded ? 'animate-pulse opacity-50' : ''
-              }`}>
-                <ForkIcon />
-                {gh.forks?.toLocaleString()} forks
-              </span>
-            )}
-
-            {/* HF open-sourced model downloads */}
-            {pub.hfRepoId && hf.downloads > 0 && (
-              <a
-                href={pub.links.huggingface}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center gap-1.5 text-white/35 text-xs font-body hover:text-cyan-400 transition-colors duration-200 ${
-                  !hf.loaded ? 'animate-pulse opacity-50' : ''
-                }`}
-              >
-                <DownloadIcon />
-                {hf.downloads?.toLocaleString()} HF downloads
-              </a>
-            )}
-          </div>
+  return (
+    <motion.div
+      ref={ref}
+      className="glass-card glass-card-hover p-6 flex flex-col h-full"
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay: (index % 2) * 0.08 }}
+    >
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <span className="font-display font-bold text-[10px] rounded-full px-2.5 py-1 uppercase tracking-wide border text-violet-400 border-violet-400/30 bg-violet-400/10">
+          {patent.status === 'pending' ? 'Patent Pending' : 'Patent'}
+        </span>
+        {patent.patentNumber && (
+          <span className="font-body text-[10px] text-white/30 text-right leading-snug">
+            {patent.patentNumber}
+          </span>
         )}
       </div>
 
-      {/* Venue type badge */}
-      <div className="flex-shrink-0 self-start">
-        <span className={`font-display font-bold text-[10px] rounded-full px-2.5 py-1 uppercase tracking-wide border ${
-          pub.venueType === 'journal'
-            ? 'text-cyan-400 border-cyan-400/30 bg-cyan-400/10'
-            : pub.venueType === 'conference'
-            ? 'text-amber-400 border-amber-400/30 bg-amber-400/10'
-            : 'text-white/40 border-white/10'
-        }`}>
-          {pub.venueType === 'journal' ? 'Journal' : pub.venueType === 'conference' ? 'Conference' : 'Preprint'}
-        </span>
+      <h3 className="font-display font-bold text-lg leading-snug mb-3 text-white/85">
+        {patent.title}
+      </h3>
+
+      {(patent.inventors || patent.assignee) && (
+        <p className="font-body text-sm text-white/40 leading-relaxed mb-5 flex-1">
+          {patent.inventors}
+          {patent.inventors && patent.assignee && <br />}
+          {patent.assignee}
+        </p>
+      )}
+
+      <div className="flex items-center justify-between gap-3 flex-wrap pt-4 border-t border-white/[0.06] mt-auto">
+        {patent.year && (
+          <span className="font-body text-xs text-white/40">{patent.year}</span>
+        )}
+        {patent.link && (
+          <a
+            href={patent.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-display font-semibold text-cyan-400/80 border border-cyan-400/25 bg-cyan-400/08 rounded-md px-3 py-1.5 hover:bg-cyan-400/15 hover:text-cyan-400 transition-colors duration-200"
+          >
+            Google Patents ↗
+          </a>
+        )}
       </div>
     </motion.div>
   )
@@ -248,39 +333,30 @@ export default function Publications() {
             <span className="text-white/15">|</span>
             <span><span className="font-display font-bold text-cyan-400">{authorStats.citations}</span> Citations</span>
             <span className="text-white/15">|</span>
-            <span><span className="font-display font-bold text-cyan-400">{authorStats.i10Index}</span> i10-index</span>
-            <span className="text-white/15">|</span>
             <span><span className="font-display font-bold text-cyan-400">{authorStats.hIndex}</span> h-index</span>
             <span className="text-white/15">|</span>
-            <span><span className="font-display font-bold text-cyan-400">{authorStats.highlyInfluentialCitations}</span> Highly Influential Citations</span>
+            <span><span className="font-display font-bold text-cyan-400">{authorStats.i10Index}</span> i10-index</span>
+            <span className="text-white/15">|</span>
+            <span><span className="font-display font-bold text-cyan-400">{patents.length}</span> Patents</span>
           </div>
         </motion.div>
 
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {publications.map((pub, i) => (
-            <PubRow key={pub.id} pub={pub} index={i} />
-          ))}
-
-          {/* Patents */}
-          {patents.map((p, i) => (
-            <motion.div
-              key={p.id}
-              className="glass-card p-5 flex items-center gap-4"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: (publications.length + i) * 0.07 }}
-            >
-              <div className="flex-shrink-0">
-                <span className="font-display font-bold text-[10px] text-white/30 border border-white/10 rounded-full px-2.5 py-1 uppercase tracking-wide">
-                  Patent Pending
-                </span>
-              </div>
-              <p className="font-body text-sm text-white/40 leading-relaxed">
-                {p.title}
-              </p>
-            </motion.div>
+            <PubCard key={pub.id} pub={pub} index={i} />
           ))}
         </div>
+
+        {patents.length > 0 && (
+          <div className="mt-14">
+            <span className="section-label block mb-5">Patents</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {patents.map((p, i) => (
+                <PatentCard key={p.id} patent={p} index={i} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )

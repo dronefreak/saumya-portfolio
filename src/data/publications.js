@@ -19,6 +19,7 @@ export const publications = [
     semanticScholarLookup: { type: 's2id', id: '72fcfee75fdb411895411abcc802c7aef08ef2f7' },
     githubRepo: 'CABiNet',
     hfRepoId: 'dronefreak/cabinet-mobilenetv3-small-uavid',
+    hfCollectionSlug: 'dronefreak/uavid-semantic-segmentation-model-zoo', // shows the zoo's aggregate downloads
     links: {
       doi: 'https://doi.org/10.1016/j.isprsjprs.2021.06.007',
       github: 'https://github.com/dronefreak/CABiNet',
@@ -39,9 +40,10 @@ export const publications = [
     semanticScholarLookup: { type: 's2id', id: '09155c81f5ed73136c02d59c3f0c79c83c1d86b2' },
     githubRepo: 'CABiNet',
     hfRepoId: 'dronefreak/cabinet-mobilenetv3-small-uavid',
+    hfCollectionSlug: 'dronefreak/uavid-semantic-segmentation-model-zoo', // shows the zoo's aggregate downloads
     links: {
       doi: 'https://doi.org/10.1109/ICRA48506.2021.9560977',
-      arxiv: 'https://arxiv.org/abs/2011.00993',
+      // arxiv: 'https://arxiv.org/abs/2011.00993',
       github: 'https://github.com/dronefreak/CABiNet',
       huggingface: 'https://huggingface.co/dronefreak/cabinet-mobilenetv3-small-uavid',
       huggingface_demo: 'https://huggingface.co/spaces/dronefreak/uavid-aerial-segmentation',
@@ -116,18 +118,34 @@ export const publications = [
 // single live API call for the merged totals — these are the deduplicated numbers.
 export const authorStats = {
   publications: 14, // These are taken manually from Google Scholar
-  citations: 343, // These are taken manually from Google Scholar
+  citations: 350, // These are taken manually from Google Scholar
   hIndex: 8, // These are taken manually from Google Scholar
   i10Index: 7, // These are taken manually from Google Scholar
-  highlyInfluentialCitations: 46,
+  // highlyInfluentialCitations: 46, // Not relevant
 }
 
-// Patents pending — update status and add filing details when available
+// Patents — update status and add filing details when available.
+// status: 'pending' (not yet publicly published) | 'published' (EP application published, pre-grant)
+// Optional `link`: Google Patents URL — shown as a "Google Patents ↗" pill when present.
 export const patents = [
   {
-    id: 'vitals-patent',
-    title: '3 patents pending: respiration rate estimation via DNN-based uncertainty estimation on Cortex Mx microprocessors (ams-OSRAM AG)',
-    status: 'pending',
-    year: 2024,
+    id: 'ep4571578',
+    title: 'Neural Network-Based Data Fusion Apparatus and Method with Associated Training Method',
+    patentNumber: 'EP4571578A1',
+    status: 'published',
+    year: 2025,
+    inventors: 'Chacon-Alam, Ashley; El Qouns, Abdelkarim; Knysh, Borys; Saksena, Saumya Kumaar',
+    assignee: '7 Sensing Software SAS',
+    link: 'https://patents.google.com/patent/EP4571578A1/en',
+  },
+  {
+    id: 'ep4571582',
+    title: 'Neural Network-Based Estimation Method for Providing a Probabilistic Output, with Associated Apparatus and Training Method',
+    patentNumber: 'EP4571582A1',
+    status: 'published',
+    year: 2025,
+    inventors: 'Chacon-Alam, Ashley; El Qouns, Abdelkarim; Knysh, Borys; Saksena, Saumya Kumaar',
+    assignee: '7 Sensing Software SAS',
+    link: 'https://patents.google.com/patent/EP4571582A1/en',
   },
 ]

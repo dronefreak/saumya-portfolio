@@ -142,7 +142,7 @@ export default function Contact() {
           {/* Primary CTA */}
           <div className="glass-card p-8 mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
-              <p className="font-display font-bold text-xl text-white mb-2">Ready to talk?</p>
+              <p className="font-display font-bold text-xl text-white mb-2">Let's talk.</p>
               <p className="font-body text-sm text-white/45">Say hello, send your project proposal, or inquire about potential collaborations.</p>
             </div>
             <a href="mailto:kumaar324@gmail.com" className="btn-primary flex-shrink-0">
