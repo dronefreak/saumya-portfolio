@@ -47,7 +47,10 @@ async function fetchAllHF(url) {
 // `downloads` on HF's plain API response is a rolling last-30-days count and
 // fluctuates day to day. `downloadsAllTime` (only present via `expand[]=downloadsAllTime`)
 // is the cumulative lifetime count — that's what we show everywhere on the portfolio.
-const EXPAND_ALL_TIME = 'expand[]=downloads&expand[]=downloadsAllTime'
+// IMPORTANT: as soon as ANY `expand[]` param is present, the API stops returning its
+// normal default fields and returns ONLY what was explicitly expanded (plus id/_id) —
+// so `likes` must be listed here too, or every item silently reports 0 likes.
+const EXPAND_ALL_TIME = 'expand[]=likes&expand[]=downloads&expand[]=downloadsAllTime'
 
 async function fetchHFAggregate(username) {
   const [models, datasets, spaces] = await Promise.all([
