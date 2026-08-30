@@ -135,8 +135,8 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/uavid-semantic-segmentation-model-zoo',  // sums downloads across all models in the zoo
-    hfDownloads: 392, // fallback while live collection data loads
-    hfLikes: 21,
+    hfDownloads: 4855, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 39,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/uavid-semantic-segmentation-model-zoo',
     },
@@ -155,8 +155,8 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/visdrone-detection-model-zoo',  // sums downloads across all models in the zoo
-    hfDownloads: 2678, // fallback while live collection data loads
-    hfLikes: 0,
+    hfDownloads: 76586, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 169,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-detection-model-zoo',
     },
@@ -175,8 +175,8 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/end-to-end-adverse-weather-removal',  // sums downloads across all models + datasets in the zoo
-    hfDownloads: 4752, // fallback while live collection data loads
-    hfLikes: 13,
+    hfDownloads: 14807, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 20,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/end-to-end-adverse-weather-removal',
       demo: 'https://huggingface.co/spaces/dronefreak/histoformer-weather-restoration',
@@ -196,8 +196,8 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/seadronessee-object-detection-model-zoo',
-    hfDownloads: 3460, // fallback while live collection data loads
-    hfLikes: 19,
+    hfDownloads: 5782, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 20,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/seadronessee-object-detection-model-zoo',
     },
@@ -216,7 +216,7 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/lisa-traffic-lights-detection-model-zoo',
-    hfDownloads: 1164, // fallback while live collection data loads
+    hfDownloads: 1594, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 20,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/lisa-traffic-lights-detection-model-zoo',
@@ -236,7 +236,7 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/exdark-object-detection-model-zoo',
-    hfDownloads: 1905, // fallback while live collection data loads
+    hfDownloads: 2714, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 18,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/exdark-object-detection-model-zoo',

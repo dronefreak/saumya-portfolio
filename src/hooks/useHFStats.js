@@ -44,10 +44,15 @@ async function fetchAllHF(url) {
   return all
 }
 
+// `downloads` on HF's plain API response is a rolling last-30-days count and
+// fluctuates day to day. `downloadsAllTime` (only present via `expand[]=downloadsAllTime`)
+// is the cumulative lifetime count — that's what we show everywhere on the portfolio.
+const EXPAND_ALL_TIME = 'expand[]=downloads&expand[]=downloadsAllTime'
+
 async function fetchHFAggregate(username) {
   const [models, datasets, spaces] = await Promise.all([
-    fetchAllHF(`${HF_API}/models?author=${username}&limit=100`),
-    fetchAllHF(`${HF_API}/datasets?author=${username}&limit=100`),
+    fetchAllHF(`${HF_API}/models?author=${username}&limit=100&${EXPAND_ALL_TIME}`),
+    fetchAllHF(`${HF_API}/datasets?author=${username}&limit=100&${EXPAND_ALL_TIME}`),
     fetchAllHF(`${HF_API}/spaces?author=${username}&limit=100`),
   ])
 
@@ -57,8 +62,8 @@ async function fetchHFAggregate(username) {
     spaces.reduce((acc, sp) => acc + (sp.likes || 0), 0)
 
   const totalDownloads =
-    models.reduce((acc, m) => acc + (m.downloads || 0), 0) +
-    datasets.reduce((acc, d) => acc + (d.downloads || 0), 0)
+    models.reduce((acc, m) => acc + (m.downloadsAllTime ?? m.downloads ?? 0), 0) +
+    datasets.reduce((acc, d) => acc + (d.downloadsAllTime ?? d.downloads ?? 0), 0)
 
   return {
     totalLikes,
@@ -69,10 +74,10 @@ async function fetchHFAggregate(username) {
     // Per-item breakdown if you ever want to render a leaderboard
     breakdown: {
       models: models
-        .map(m => ({ id: m.id, likes: m.likes || 0, downloads: m.downloads || 0 }))
+        .map(m => ({ id: m.id, likes: m.likes || 0, downloads: m.downloadsAllTime ?? m.downloads ?? 0 }))
         .sort((a, b) => b.downloads - a.downloads),
       datasets: datasets
-        .map(d => ({ id: d.id, likes: d.likes || 0, downloads: d.downloads || 0 }))
+        .map(d => ({ id: d.id, likes: d.likes || 0, downloads: d.downloadsAllTime ?? d.downloads ?? 0 }))
         .sort((a, b) => b.downloads - a.downloads),
       spaces: spaces
         .map(sp => ({ id: sp.id, likes: sp.likes || 0 }))
@@ -136,8 +141,11 @@ export function useHFStats(username) {
 // Usage:
 //   const { downloads, likes, modelCount, loaded } = useHFCollection('dronefreak/visdrone-detection-model-zoo')
 //
-// Collections aren't paginated by the API, so this is a single fetch —
-// downloads/likes are summed across every item (model/dataset/space) in it.
+// Collections aren't paginated by the API, so the collection itself is a single fetch —
+// but its `/api/collections/{slug}` response ignores `expand`, so it only ever hands back
+// the rolling last-30-days `downloads` per item. To get all-time counts, each item (model
+// or dataset — spaces don't track downloads) gets a follow-up fetch with `expand[]=downloadsAllTime`.
+// Likes ARE accurate straight off the collection response, so those don't need a follow-up.
 
 export function useHFCollection(collectionSlug, staticDownloads = 0, staticLikes = 0) {
   const [stats, setStats] = useState({
@@ -159,11 +167,26 @@ export function useHFCollection(collectionSlug, staticDownloads = 0, staticLikes
 
     fetch(`${HF_API}/collections/${collectionSlug}`)
       .then(r => r.json())
-      .then(data => {
+      .then(async data => {
         const items = data.items || []
+        const likes = items.reduce((acc, item) => acc + (item.likes || 0), 0)
+
+        // Downloadable item types only — spaces have no download counter.
+        const downloadCounts = await Promise.all(
+          items
+            .filter(item => item.type === 'model' || item.type === 'dataset')
+            .map(item => {
+              const endpoint = item.type === 'dataset' ? 'datasets' : 'models'
+              return fetch(`${HF_API}/${endpoint}/${item.id}?${EXPAND_ALL_TIME}`)
+                .then(r => r.json())
+                .then(d => d.downloadsAllTime ?? d.downloads ?? 0)
+                .catch(() => item.downloads || 0)
+            })
+        )
+
         const fresh = {
-          downloads: items.reduce((acc, item) => acc + (item.downloads || 0), 0),
-          likes: items.reduce((acc, item) => acc + (item.likes || 0), 0),
+          downloads: downloadCounts.reduce((acc, n) => acc + n, 0),
+          likes,
           modelCount: items.length,
         }
         setCache(cacheKey, fresh)
@@ -195,11 +218,12 @@ export function useHFModel(repoId, type = 'model', staticLikes = 0, staticDownlo
   useEffect(() => {
     if (!repoId) return
 
+    // Spaces don't track downloads, so no point requesting the all-time expand there.
     const endpoint = type === 'dataset'
-      ? `${HF_API}/datasets/${repoId}`
+      ? `${HF_API}/datasets/${repoId}?${EXPAND_ALL_TIME}`
       : type === 'space'
       ? `${HF_API}/spaces/${repoId}`
-      : `${HF_API}/models/${repoId}`
+      : `${HF_API}/models/${repoId}?${EXPAND_ALL_TIME}`
 
     const cacheKey = `hf_${type}_${repoId.replace('/', '_')}`
     const cached = getCached(cacheKey)
@@ -213,7 +237,7 @@ export function useHFModel(repoId, type = 'model', staticLikes = 0, staticDownlo
       .then(data => {
         const fresh = {
           likes: data.likes || 0,
-          downloads: data.downloads || 0,
+          downloads: data.downloadsAllTime ?? data.downloads ?? 0,
         }
         setCache(cacheKey, fresh)
         setStats({ ...fresh, loaded: true })
