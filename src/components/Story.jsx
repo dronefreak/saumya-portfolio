@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { story } from '../data/experience'
 
 function StoryNode({ node, index, total }) {
@@ -107,6 +107,7 @@ function StoryStrip() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, amount: 0.4 })
   const total = story.length
+  const [hovered, setHovered] = useState(null)
 
   const jumpTo = (e, id) => {
     e.preventDefault()
@@ -148,25 +149,57 @@ function StoryStrip() {
             </a>
           )
           const stem = <div className="w-px h-5 mx-auto" style={{ background: node.accent, opacity: 0.5 }} />
+          const isHovered = hovered === node.id
+
+          // Achievements popover — lives in the empty slot opposite the label, so nothing shifts.
+          const popover = node.hoverLines && (
+            <div className={`absolute left-1/2 -translate-x-1/2 z-30 pointer-events-none ${above ? 'top-2' : 'bottom-2'}`}>
+              <motion.ul
+                className="w-44 glass-card p-3 space-y-1.5 text-left"
+                style={{ borderColor: `${node.accent}66` }}
+                initial={false}
+                animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : above ? -6 : 6 }}
+                transition={{ duration: 0.18, ease: 'easeOut' }}
+              >
+                {node.hoverLines.map(line => (
+                  <li key={line} className="flex gap-2 font-body text-[11px] leading-snug text-white/80">
+                    <span className="mt-[5px] w-1 h-1 rounded-full flex-shrink-0" style={{ background: node.accent }} />
+                    {line}
+                  </li>
+                ))}
+              </motion.ul>
+            </div>
+          )
 
           return (
             <motion.div
               key={node.id}
-              className="flex flex-col items-center"
+              className={`relative flex flex-col items-center ${isHovered ? 'z-20' : ''}`}
+              onMouseEnter={() => setHovered(node.id)}
+              onMouseLeave={() => setHovered(null)}
+              onFocus={() => setHovered(node.id)}
+              onBlur={() => setHovered(null)}
               initial={{ opacity: 0, y: above ? 10 : -10 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.25 + i * 0.15 }}
             >
               {/* Top slot */}
-              <div className="h-28 flex flex-col justify-end">
-                {above && (<>{label}{stem}</>)}
+              <div className="relative h-28 flex flex-col justify-end">
+                {above ? (<>{label}{stem}</>) : popover}
               </div>
 
               {/* Node */}
-              <div className="relative h-5 w-5 flex items-center justify-center">
+              <motion.div
+                className="relative h-5 w-5 flex items-center justify-center"
+                animate={{ scale: isHovered ? 1.6 : 1 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+              >
                 <span
-                  className={`block bg-navy-900 border-2 ${node.kind === 'research' ? 'w-3.5 h-3.5 rotate-45' : 'w-4 h-4 rounded-full'}`}
-                  style={{ borderColor: node.accent, boxShadow: `0 0 12px ${node.accent}66` }}
+                  className={`block bg-navy-900 border-2 transition-shadow duration-200 ${node.kind === 'research' ? 'w-3.5 h-3.5 rotate-45' : 'w-4 h-4 rounded-full'}`}
+                  style={{
+                    borderColor: node.accent,
+                    boxShadow: isHovered ? `0 0 22px ${node.accent}CC` : `0 0 12px ${node.accent}66`,
+                  }}
                 />
                 {isLast && (
                   <span
@@ -174,11 +207,11 @@ function StoryStrip() {
                     style={{ borderColor: `${node.accent}66` }}
                   />
                 )}
-              </div>
+              </motion.div>
 
               {/* Bottom slot */}
-              <div className="h-28 flex flex-col justify-start">
-                {!above && (<>{stem}{label}</>)}
+              <div className="relative h-28 flex flex-col justify-start">
+                {above ? popover : (<>{stem}{label}</>)}
               </div>
             </motion.div>
           )

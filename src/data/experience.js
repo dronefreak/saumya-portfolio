@@ -1,6 +1,6 @@
 // ─── EDIT THIS FILE to update the career story arc ────────────────────────────
 // Nodes are shown in order. Keep to 4–6 for a readable narrative.
-// accent: color of the node in the timeline strip. kind: 'research' renders a diamond node (degree/thesis) instead of a dot.
+// accent: color of the node in the timeline strip. hoverLines: 2–3 short achievements shown in the strip's hover popover. kind: 'research' renders a diamond node (degree/thesis) instead of a dot.
 
 export const story = [
   {
@@ -12,6 +12,7 @@ export const story = [
     period: '2016 – 2018',
     theme: 'Origin',
     accent: '#22D3EE',
+    hoverLines: ['81.4% EEG accuracy', '<50 ms reaction latency', '>90% drone navigation success'],
     headline: 'Two threads. One constraint: real-time.',
     description:
       'Two threads at IISc: first, a 4-class brain-computer interface for real-time control of fixed-wing and multi-rotor UAVs, with 81.4% classification accuracy on 14-channel EEG using wavelet features and neural networks. Then, real-time obstacle avoidance for autonomous drones in unstructured outdoor environments using dense optical flow on hardware that barely had cycles to spare.',
@@ -28,6 +29,7 @@ export const story = [
     period: '2019',
     theme: 'Edge AI Debut',
     accent: '#A3E635',
+    hoverLines: ['95% floor-type accuracy', 'Jetson TX2 + TensorRT'],
     headline: 'First edge AI deployment.',
     description:
       'Deep learning semantic understanding for an autonomous cleaning robot. 5+ flooring types identified at 95%+ accuracy to avoid using incorrect materials for scrubbing. Deployed on a Jetson TX2 with TensorRT optimisations for real-time inference.',
@@ -44,6 +46,7 @@ export const story = [
     period: '2020',
     theme: 'MSc Thesis · 2 Papers',
     accent: '#FBBF24',
+    hoverLines: ['63.5 mIoU on UAVid', '2.5× faster than prior SOTA', 'ICRA + ISPRS papers'],
     kind: 'research',
     headline: 'State-of-the-art on three benchmarks. Two papers.',
     description:
@@ -61,6 +64,7 @@ export const story = [
     period: '2020 – 2025',
     theme: 'Edge AI at Scale',
     accent: '#2DD4BF',
+    hoverLines: ['52 FPS depth on a phone NPU', '25× latency reduction', '2 published patents'],
     headline: 'Depth, light, vitals, gestures: all on-device.',
     description:
       'Four years deploying ML across spatial, environmental, health, and interaction sensing, always on constrained hardware. 3D depth via RGB+dToF at 52 FPS on Samsung S20 NPU (<2% MAPE). Lossless 8-bit light estimation with 25× latency reduction on Pixel 6 NPU. Vital-signs: respiration rate and blood pressure on Cortex Mx MCUs, with DNN-based uncertainty, yielding a 20% accuracy gain and 50% memory reduction on BP. PPG-based gesture recognition (4 gestures, >95% accuracy) for smartwatches and AR/VR glasses. Protocol design and data acquisition across 70+ subjects for gesture recognition. 2 published European patent applications (EP4571578, EP4571582) on neural-network data fusion and probabilistic estimation.',
@@ -77,10 +81,11 @@ export const story = [
     period: '2025 – Present',
     theme: 'Perception',
     accent: '#60A5FA',
+    hoverLines: ['Annotation: days → overnight', '2D + 3D LiDAR pipelines', 'SOTA detectors benchmarked'],
     headline: 'Train big. Deploy small.',
     description:
-      'On the perception team: state-of-the-art 2D object detection research and a semi-automated annotation pipeline for outdoor autonomous-driving scenes, cutting annotation from days to overnight, occluded objects included. Built the 2-stage pipeline that produces our internal mixed-label dataset, fused with a second pipeline that annotates relevant traffic lights: 19K images so far. Benchmarked several SOTA detectors on the proprietary dataset to decide which upgrade is worth making, keeping the current model in place while new data is annotated. Now building a similar pipeline for 3D LiDAR point-cloud detection. Earlier in the role: LiDAR/Radar safety-layer fusion via CIP Safety and AEB within a 50 ms control loop, toward ASIL-B / PL-D.',
-    stat: { value: '19K', label: 'Images auto-annotated so far' },
+      'On the perception team: state-of-the-art 2D object detection research and a semi-automated annotation pipeline for outdoor autonomous-driving scenes, cutting annotation from days to overnight, occluded objects included. Built the 2-stage pipeline that produces our internal mixed-label dataset, fused with a second pipeline that annotates relevant traffic lights. Benchmarked several SOTA detectors on the proprietary dataset to decide which upgrade is worth making, keeping the current model in place while new data is annotated. Now building a similar pipeline for 3D LiDAR point-cloud detection. Earlier in the role: LiDAR/Radar safety-layer fusion via CIP Safety and AEB within a 50 ms control loop, toward ASIL-B / PL-D.',
+    stat: { value: '2D + 3D', label: 'Auto-annotation pipelines' },
     constraint: '2-stage pipeline, occluded objects included; SOTA detectors benchmarked on proprietary data',
     tags: ['Edge AI', 'Deep Learning', 'CNN', 'Transformers', 'TensorRT', 'ONNX', '2D Object Detection', '3D LiDAR Detection', 'Auto-Annotation', 'Benchmarking'],
   },
