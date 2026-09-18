@@ -10,6 +10,7 @@ function StoryNode({ node, index, total }) {
   return (
     <motion.div
       ref={ref}
+      id={`story-${node.id}`}
       className={`relative flex flex-col md:flex-row items-start gap-0 md:gap-8 ${
         isRight ? 'md:flex-row-reverse' : ''
       }`}
@@ -25,11 +26,9 @@ function StoryNode({ node, index, total }) {
         )}
         {/* Node circle */}
         <div className="relative z-10 w-10 h-10 rounded-full border-2 border-cyan-400/60 bg-navy-900 flex items-center justify-center flex-shrink-0">
-          <span className="font-display font-bold text-sm text-cyan-400">
-            {String(index + 1).padStart(2, '0')}
-          </span>
-          {/* Outer pulse ring */}
-          {index === total - 1 && (
+          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400/70" />
+          {/* Outer pulse ring — first card is the current role */}
+          {index === 0 && (
             <span className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping" />
           )}
         </div>
@@ -42,9 +41,7 @@ function StoryNode({ node, index, total }) {
       {/* Mobile node indicator */}
       <div className="flex md:hidden items-center gap-3 mb-4">
         <div className="w-8 h-8 rounded-full border border-cyan-400/50 bg-navy-900 flex items-center justify-center flex-shrink-0">
-          <span className="font-display font-bold text-xs text-cyan-400">
-            {String(index + 1).padStart(2, '0')}
-          </span>
+          <span className="w-2 h-2 rounded-full bg-cyan-400/70" />
         </div>
         <div className="flex-1 h-px bg-cyan-400/20" />
       </div>
@@ -104,6 +101,93 @@ function StoryNode({ node, index, total }) {
   )
 }
 
+// Compact at-a-glance timeline: labels alternate above/below a single line.
+// Desktop only — on mobile the numbered cards below already form a vertical timeline.
+function StoryStrip() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, amount: 0.4 })
+  const total = story.length
+
+  const jumpTo = (e, id) => {
+    e.preventDefault()
+    document.getElementById(`story-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
+  return (
+    <div ref={ref} className="hidden md:block relative mb-24">
+      {/* Spine — spans first-to-last node centre, gradient through the node colours */}
+      <motion.div
+        className="absolute top-1/2 h-px -translate-y-1/2 origin-left"
+        style={{
+          left: `${50 / total}%`,
+          right: `${50 / total}%`,
+          background: `linear-gradient(90deg, ${story.map(n => n.accent).join(', ')})`,
+        }}
+        initial={{ scaleX: 0 }}
+        animate={inView ? { scaleX: 1 } : {}}
+        transition={{ duration: 1.1, ease: 'easeOut' }}
+      />
+
+      <div className="grid" style={{ gridTemplateColumns: `repeat(${total}, minmax(0, 1fr))` }}>
+        {story.map((node, i) => {
+          const above = i % 2 === 0
+          const isLast = i === total - 1
+          const label = (
+            <a
+              href={`#story-${node.id}`}
+              onClick={e => jumpTo(e, node.id)}
+              className="group block text-center px-2"
+            >
+              <div className="font-display font-bold text-sm" style={{ color: node.accent }}>
+                {node.period}
+              </div>
+              <div className="font-display font-semibold text-sm leading-snug text-white/85 underline decoration-transparent underline-offset-4 group-hover:text-white group-hover:decoration-current transition-colors duration-200">
+                {node.company}
+              </div>
+              <div className="font-body text-[11px] text-white/40 leading-snug">{node.theme}</div>
+            </a>
+          )
+          const stem = <div className="w-px h-5 mx-auto" style={{ background: node.accent, opacity: 0.5 }} />
+
+          return (
+            <motion.div
+              key={node.id}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: above ? 10 : -10 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.25 + i * 0.15 }}
+            >
+              {/* Top slot */}
+              <div className="h-28 flex flex-col justify-end">
+                {above && (<>{label}{stem}</>)}
+              </div>
+
+              {/* Node */}
+              <div className="relative h-5 w-5 flex items-center justify-center">
+                <span
+                  className={`block bg-navy-900 border-2 ${node.kind === 'research' ? 'w-3.5 h-3.5 rotate-45' : 'w-4 h-4 rounded-full'}`}
+                  style={{ borderColor: node.accent, boxShadow: `0 0 12px ${node.accent}66` }}
+                />
+                {isLast && (
+                  <span
+                    className="absolute inset-0 rounded-full border animate-ping"
+                    style={{ borderColor: `${node.accent}66` }}
+                  />
+                )}
+              </div>
+
+              {/* Bottom slot */}
+              <div className="h-28 flex flex-col justify-start">
+                {!above && (<>{stem}{label}</>)}
+              </div>
+            </motion.div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 export default function Story() {
   const headRef = useRef(null)
   const headInView = useInView(headRef, { once: true, amount: 0.4 })
@@ -122,20 +206,24 @@ export default function Story() {
         >
           <span className="section-label block mb-4">The Arc</span>
           <h2 className="font-display font-bold text-4xl md:text-5xl text-white leading-tight tracking-tight mb-5">
-            Six years.{' '}
-            <span className="text-gradient-cyan">One constraint.</span>
+            Small hardware.{' '}
+            <span className="text-gradient-cyan">Big ideas.</span>
           </h2>
           <p className="font-body text-base text-white/45 max-w-xl mx-auto leading-relaxed mb-4">
-            Make it see, make it fast, make it safe.
+            Eight years. Still curious.
           </p>
           <p className="font-body text-sm text-white/40 max-w-2xl mx-auto leading-relaxed">
             What I actually care about: compressing models until they run on real edge hardware (pruning, quantization); benchmarks and codebases other people can trust, rerun, and get the same numbers from; and scene understanding for autonomous systems, UAVs first, now self-driving, where real-time and memory limits aren't optional.
           </p>
         </motion.div>
 
+        {/* At-a-glance strip */}
+        <StoryStrip />
+
         {/* Timeline */}
         <div className="relative">
-          {story.map((node, i) => (
+          {/* Cards run latest → first; the strip above stays chronological */}
+          {[...story].reverse().map((node, i) => (
             <StoryNode key={node.id} node={node} index={i} total={story.length} />
           ))}
         </div>

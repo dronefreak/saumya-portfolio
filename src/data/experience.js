@@ -1,5 +1,6 @@
 // ─── EDIT THIS FILE to update the career story arc ────────────────────────────
 // Nodes are shown in order. Keep to 4–6 for a readable narrative.
+// accent: color of the node in the timeline strip. kind: 'research' renders a diamond node (degree/thesis) instead of a dot.
 
 export const story = [
   {
@@ -10,6 +11,7 @@ export const story = [
     location: 'Bangalore, India',
     period: '2016 – 2018',
     theme: 'Origin',
+    accent: '#22D3EE',
     headline: 'Two threads. One constraint: real-time.',
     description:
       'Two threads at IISc: first, a 4-class brain-computer interface for real-time control of fixed-wing and multi-rotor UAVs, with 81.4% classification accuracy on 14-channel EEG using wavelet features and neural networks. Then, real-time obstacle avoidance for autonomous drones in unstructured outdoor environments using dense optical flow on hardware that barely had cycles to spare.',
@@ -24,7 +26,8 @@ export const story = [
     role: 'Robotics & Perception Intern',
     location: 'Den Bosch, Netherlands',
     period: '2019',
-    theme: 'Safety Layer',
+    theme: 'Edge AI Debut',
+    accent: '#A3E635',
     headline: 'First edge AI deployment.',
     description:
       'Deep learning semantic understanding for an autonomous cleaning robot. 5+ flooring types identified at 95%+ accuracy to avoid using incorrect materials for scrubbing. Deployed on a Jetson TX2 with TensorRT optimisations for real-time inference.',
@@ -39,7 +42,9 @@ export const story = [
     role: 'Graduate Research, MSc Thesis',
     location: 'Enschede, Netherlands',
     period: '2020',
-    theme: 'Published Research',
+    theme: 'MSc Thesis · 2 Papers',
+    accent: '#FBBF24',
+    kind: 'research',
     headline: 'State-of-the-art on three benchmarks. Two papers.',
     description:
       'MSc thesis on low-latency semantic segmentation for embedded devices: a new pipeline with global and local attention modules for efficient context aggregation. Outperformed prior real-time approaches on Cityscapes, UAVid, and AeroScapes. Led directly to two peer-reviewed publications: ICRA 2021 and ISPRS Journal 2021.',
@@ -55,9 +60,10 @@ export const story = [
     location: 'Paris, France',
     period: '2020 – 2025',
     theme: 'Edge AI at Scale',
-    headline: 'Five domains. Four hardware targets. One constraint: ship it.',
+    accent: '#2DD4BF',
+    headline: 'Depth, light, vitals, gestures: all on-device.',
     description:
-      'Four years deploying ML across spatial, environmental, health, and interaction sensing, always on constrained hardware. 3D depth via RGB+dToF at 52 FPS on Samsung S20 NPU (<2% MAPE). Lossless 8-bit light estimation with 25× latency reduction on Pixel 6 NPU. Vital-signs: respiration rate and blood pressure on Cortex Mx MCUs, with DNN-based uncertainty, yielding a 20% accuracy gain and 50% memory reduction on BP. PPG-based gesture recognition (4 gestures, >95% accuracy) for smartwatches and AR/VR glasses. Protocol design and data acquisition across 70+ subjects for gesture recognition. 4 patents pending.',
+      'Four years deploying ML across spatial, environmental, health, and interaction sensing, always on constrained hardware. 3D depth via RGB+dToF at 52 FPS on Samsung S20 NPU (<2% MAPE). Lossless 8-bit light estimation with 25× latency reduction on Pixel 6 NPU. Vital-signs: respiration rate and blood pressure on Cortex Mx MCUs, with DNN-based uncertainty, yielding a 20% accuracy gain and 50% memory reduction on BP. PPG-based gesture recognition (4 gestures, >95% accuracy) for smartwatches and AR/VR glasses. Protocol design and data acquisition across 70+ subjects for gesture recognition. 2 published European patent applications (EP4571578, EP4571582) on neural-network data fusion and probabilistic estimation.',
     stat: { value: '5', label: 'Distinct deployments' },
     constraint: 'NPU · MCU · Wearable · Mobile · Real-time',
     tags: ['AR/VR', 'TensorFlow', 'PyTorch', 'Edge AI', 'Computer Vision', 'Deep Learning', 'TF-Lite', 'NPU', 'Cortex Mx', 'Quantisation', 'Gesture Recognition', 'dToF', 'PPG', 'Vital Signs', 'Blood Pressure', 'Respiration Rate'],
@@ -69,12 +75,13 @@ export const story = [
     role: 'Robotics & Perception Engineer',
     location: 'Paris, France',
     period: '2025 – Present',
-    theme: 'Functional Safety',
-    headline: '50 ms. No margin for error.',
+    theme: 'Perception',
+    accent: '#60A5FA',
+    headline: 'Train big. Deploy small.',
     description:
-      'Safety-layer fusion of LiDAR and Radar via CIP Safety protocol, independent of perception stack failures. Automatic Emergency Braking within a 50 ms control loop. Designing and validating systems toward ASIL-B / PL-D targets for autonomous shuttles operating on regulated public roads.',
-    stat: { value: '50 ms', label: 'AEB control loop' },
-    constraint: 'Targeting ASIL-B / PL-D, regulated public roads',
-    tags: ['ASIL-B', 'CIP Safety', 'LiDAR', 'Radar', 'AEB', 'Functional Safety'],
+      'On the perception team: state-of-the-art 2D object detection research and a semi-automated annotation pipeline for outdoor autonomous-driving scenes, cutting annotation from days to overnight, occluded objects included. Built the 2-stage pipeline that produces our internal mixed-label dataset, fused with a second pipeline that annotates relevant traffic lights: 19K images so far. Benchmarked several SOTA detectors on the proprietary dataset to decide which upgrade is worth making, keeping the current model in place while new data is annotated. Now building a similar pipeline for 3D LiDAR point-cloud detection. Earlier in the role: LiDAR/Radar safety-layer fusion via CIP Safety and AEB within a 50 ms control loop, toward ASIL-B / PL-D.',
+    stat: { value: '19K', label: 'Images auto-annotated so far' },
+    constraint: '2-stage pipeline, occluded objects included; SOTA detectors benchmarked on proprietary data',
+    tags: ['Edge AI', 'Deep Learning', 'CNN', 'Transformers', 'TensorRT', 'ONNX', '2D Object Detection', '3D LiDAR Detection', 'Auto-Annotation', 'Benchmarking'],
   },
 ]
