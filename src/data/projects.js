@@ -138,7 +138,10 @@ export const projects = [
     hfDownloads: 6483, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 41,
     links: {
+      github: 'https://github.com/dronefreak/CABiNet',
+      paper: 'https://arxiv.org/abs/2011.00993',
       huggingface: 'https://huggingface.co/collections/dronefreak/uavid-semantic-segmentation-model-zoo',
+      demo: 'https://huggingface.co/spaces/dronefreak/uavid-aerial-segmentation',
     },
     featured: true,
     badge: 'Hugging Face',
@@ -158,7 +161,9 @@ export const projects = [
     hfDownloads: 12533, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 153,
     links: {
+      github: 'https://github.com/dronefreak/VisDrone-dataset-python-toolkit',
       huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-object-detection-model-zoo',
+      demo: 'https://huggingface.co/spaces/dronefreak/visdrone-aerial-detection',
     },
     featured: true,
     badge: 'Hugging Face',
@@ -199,6 +204,7 @@ export const projects = [
     hfDownloads: 12516, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 21,
     links: {
+      github: 'https://github.com/dronefreak/DetectionBench',
       huggingface: 'https://huggingface.co/collections/dronefreak/seadronessee-object-detection-model-zoo',
     },
     featured: true,
@@ -219,6 +225,7 @@ export const projects = [
     hfDownloads: 3018, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 20,
     links: {
+      github: 'https://github.com/dronefreak/DetectionBench',
       huggingface: 'https://huggingface.co/collections/dronefreak/lisa-traffic-lights-object-detection-model-zoo',
     },
     featured: true,
@@ -239,6 +246,7 @@ export const projects = [
     hfDownloads: 5371, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 18,
     links: {
+      github: 'https://github.com/dronefreak/DetectionBench',
       huggingface: 'https://huggingface.co/collections/dronefreak/exdark-object-detection-model-zoo',
     },
     featured: true,
