@@ -15,7 +15,7 @@ export const projects = [
     staticForks: 0,
     links: {
       github: 'https://github.com/dronefreak/human-action-classification',
-      huggingface: 'https://huggingface.co/collections/dronefreak/human-action-classification-model-zoo',
+      huggingface: 'https://huggingface.co/dronefreak/human-action-classification-stanford40',
     },
     featured: true,
     badge: 'Action Recognition',
@@ -32,7 +32,7 @@ export const projects = [
     staticForks: 0,
     links: {
       github: 'https://github.com/dronefreak/VisDrone-dataset-python-toolkit',
-      huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-detection-model-zoo',
+      huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-object-detection-model-zoo',
       demo: 'https://huggingface.co/spaces/dronefreak/visdrone-aerial-detection',
     },
     featured: true,
@@ -135,8 +135,8 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/uavid-semantic-segmentation-model-zoo',  // sums downloads across all models in the zoo
-    hfDownloads: 4855, // fallback while live collection data loads (all-time, not last-30-days)
-    hfLikes: 39,
+    hfDownloads: 6483, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 41,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/uavid-semantic-segmentation-model-zoo',
     },
@@ -154,11 +154,11 @@ export const projects = [
     staticStars: null,
     staticForks: null,
     hfRepoId: null,
-    hfCollectionSlug: 'dronefreak/visdrone-detection-model-zoo',  // sums downloads across all models in the zoo
-    hfDownloads: 76586, // fallback while live collection data loads (all-time, not last-30-days)
-    hfLikes: 169,
+    hfCollectionSlug: 'dronefreak/visdrone-object-detection-model-zoo',  // sums downloads across all models in the zoo
+    hfDownloads: 12533, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 153,
     links: {
-      huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-detection-model-zoo',
+      huggingface: 'https://huggingface.co/collections/dronefreak/visdrone-object-detection-model-zoo',
     },
     featured: true,
     badge: 'Hugging Face',
@@ -175,8 +175,8 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/end-to-end-adverse-weather-removal',  // sums downloads across all models + datasets in the zoo
-    hfDownloads: 14807, // fallback while live collection data loads (all-time, not last-30-days)
-    hfLikes: 20,
+    hfDownloads: 19195, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 21,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/end-to-end-adverse-weather-removal',
       demo: 'https://huggingface.co/spaces/dronefreak/histoformer-weather-restoration',
@@ -196,8 +196,8 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/seadronessee-object-detection-model-zoo',
-    hfDownloads: 5782, // fallback while live collection data loads (all-time, not last-30-days)
-    hfLikes: 20,
+    hfDownloads: 12516, // fallback while live collection data loads (all-time, not last-30-days)
+    hfLikes: 21,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/seadronessee-object-detection-model-zoo',
     },
@@ -215,11 +215,11 @@ export const projects = [
     staticStars: null,
     staticForks: null,
     hfRepoId: null,
-    hfCollectionSlug: 'dronefreak/lisa-traffic-lights-detection-model-zoo',
-    hfDownloads: 1594, // fallback while live collection data loads (all-time, not last-30-days)
+    hfCollectionSlug: 'dronefreak/lisa-traffic-lights-object-detection-model-zoo',
+    hfDownloads: 3018, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 20,
     links: {
-      huggingface: 'https://huggingface.co/collections/dronefreak/lisa-traffic-lights-detection-model-zoo',
+      huggingface: 'https://huggingface.co/collections/dronefreak/lisa-traffic-lights-object-detection-model-zoo',
     },
     featured: true,
     badge: 'Hugging Face',
@@ -236,7 +236,7 @@ export const projects = [
     staticForks: null,
     hfRepoId: null,
     hfCollectionSlug: 'dronefreak/exdark-object-detection-model-zoo',
-    hfDownloads: 2714, // fallback while live collection data loads (all-time, not last-30-days)
+    hfDownloads: 5371, // fallback while live collection data loads (all-time, not last-30-days)
     hfLikes: 18,
     links: {
       huggingface: 'https://huggingface.co/collections/dronefreak/exdark-object-detection-model-zoo',
@@ -248,7 +248,7 @@ export const projects = [
     id: 'more-model-zoos',
     title: 'More Model Zoos',
     description:
-      'DetectionBench standardizes evaluation of YOLO/RF-DETR/CABiNet beyond COCO, powering 11 fine-tuned model zoos across UAV, maritime, traffic-light, agricultural, and low-light detection.',
+      'DetectionBench standardizes evaluation of YOLO/RF-DETR/CABiNet beyond COCO, powering 16 model zoos from aerial and maritime to driving, road-damage, agricultural, and low-light scenes.',
     tags: ['YOLO26', 'RF-DETR', 'CABiNet'],
     category: 'Open Source',
     githubRepo: 'DetectionBench',

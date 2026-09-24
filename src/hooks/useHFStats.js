@@ -142,7 +142,7 @@ export function useHFStats(username) {
 // ─── Hook: aggregate stats for a HF Collection (fixed list of repos) ──────────
 //
 // Usage:
-//   const { downloads, likes, modelCount, loaded } = useHFCollection('dronefreak/visdrone-detection-model-zoo')
+//   const { downloads, likes, modelCount, loaded } = useHFCollection('dronefreak/visdrone-object-detection-model-zoo')
 //
 // Collections aren't paginated by the API, so the collection itself is a single fetch —
 // but its `/api/collections/{slug}` response ignores `expand`, so it only ever hands back
@@ -169,9 +169,16 @@ export function useHFCollection(collectionSlug, staticDownloads = 0, staticLikes
     }
 
     fetch(`${HF_API}/collections/${collectionSlug}`)
-      .then(r => r.json())
+      .then(r => {
+        // A renamed/deleted collection 404s — bail to the static fallback instead of caching zeros.
+        if (!r.ok) throw new Error(`HF API ${r.status}`)
+        return r.json()
+      })
       .then(async data => {
-        const items = data.items || []
+        // Only count repos owned by the collection's owner — a third-party dataset or mirror
+        // added to a collection must never inflate the totals.
+        const owner = collectionSlug.split('/')[0]
+        const items = (data.items || []).filter(item => item.id?.startsWith(`${owner}/`))
         const likes = items.reduce((acc, item) => acc + (item.likes || 0), 0)
 
         // Downloadable item types only — spaces have no download counter.
@@ -236,7 +243,10 @@ export function useHFModel(repoId, type = 'model', staticLikes = 0, staticDownlo
     }
 
     fetch(endpoint)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HF API ${r.status}`)
+        return r.json()
+      })
       .then(data => {
         const fresh = {
           likes: data.likes || 0,
