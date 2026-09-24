@@ -2,6 +2,8 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useHFStats } from '../hooks/useHFStats'
 import { useGitHubTotalStars, useGitHubProfile } from '../hooks/useGitHubStats'
+import { authorStats } from '../data/publications'
+import { linkedinStats } from '../data/social'
 
 // Formats a live number — returns fallback string while still loading (null)
 function fmtCount(n, fallback) {
@@ -131,6 +133,12 @@ export default function Contact() {
   const activity = activityLabel(gh.lastPush)
 
   const liveDescriptions = {
+    // Hand-entered (no LinkedIn API): src/data/social.js
+    LinkedIn: (
+      <>
+        <Num>{fmtFull(linkedinStats.followers)}</Num> Followers · Professional profile and career updates
+      </>
+    ),
     GitHub: (
       <>
         <Num>{fmtCount(gh.repoCount, '30+')}</Num> Repos · <Num>{fmtCount(gh.totalStars, '700+')}</Num> Stars ·{' '}
@@ -142,6 +150,13 @@ export default function Contact() {
       <>
         <Num>{fmtCount(hf.modelCount, '35+')}</Num> Models · <Num>{fmtFull(hf.totalDownloads, '0')}</Num> Downloads ·{' '}
         <Num>{fmtCount(hf.followers, '40+')}</Num> Followers · <Num>{fmtCount(hf.discussions, '140+')}</Num> Discussions
+      </>
+    ),
+    // Same numbers as the Research section's stats bar (src/data/publications.js, updated by hand from Scholar)
+    'Google Scholar': (
+      <>
+        <Num>{authorStats.publications}</Num> Publications · <Num>{authorStats.citations}</Num> Citations ·{' '}
+        <Num>{authorStats.hIndex}</Num> h-index · <Num>{authorStats.i10Index}</Num> i10-index
       </>
     ),
   }

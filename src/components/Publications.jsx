@@ -329,13 +329,9 @@ export default function Publications() {
 
           {/* Semantic Scholar author metrics */}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mt-6 font-body text-sm text-white/45">
-            <span><span className="font-display font-bold text-cyan-400">{authorStats.publications}</span> Publications</span>
-            <span className="text-white/15">|</span>
             <span><span className="font-display font-bold text-cyan-400">{authorStats.citations}</span> Citations</span>
             <span className="text-white/15">|</span>
-            <span><span className="font-display font-bold text-cyan-400">{authorStats.hIndex}</span> h-index</span>
-            <span className="text-white/15">|</span>
-            <span><span className="font-display font-bold text-cyan-400">{authorStats.i10Index}</span> i10-index</span>
+            <span><span className="font-display font-bold text-cyan-400">{authorStats.publications}</span> Publications</span>
             <span className="text-white/15">|</span>
             <span><span className="font-display font-bold text-cyan-400">{patents.length}</span> Patents</span>
           </div>
