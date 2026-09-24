@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
-import { useState, useEffect, useMemo, Fragment } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { TypeAnimation } from 'react-type-animation'
 import { useHFStats } from '../hooks/useHFStats'
 import { useGitHubTotalStars } from '../hooks/useGitHubStats'
-import { skills } from '../data/skills'
+import LidarViz from './LidarViz'
+import { authorStats, patents } from '../data/publications'
 
 // Formats a live number — returns fallback string while still loading (null)
 function fmtCount(n, fallback) {
@@ -12,10 +13,16 @@ function fmtCount(n, fallback) {
   return `${n}`
 }
 
+// Full number with thousands separators (e.g. 116,482) — no K+ rounding
+function fmtFull(n, fallback) {
+  if (n === null || n === undefined) return fallback
+  return n.toLocaleString('en-US')
+}
+
 const ROLES = [
   'Perception Architect',
   'Robotics Engineer',
-  'Functional Safety Engineer',
+  'Computer Vision Engineer',
   'Embedded AI Architect',
 ]
 
@@ -107,157 +114,6 @@ const socialLinks = [
   },
 ]
 
-// Skills that don't have icon art in the Skills section yet — the radar only
-// needs a name + color, not a logo, so they can show up here regardless.
-const RADAR_EXTRA_SKILLS = [
-  { name: 'MATLAB', color: '#FF6600' },
-  { name: 'RTMaps', color: '#184584' },
-]
-
-const RADAR_SKILLS = [...skills, ...RADAR_EXTRA_SKILLS]
-
-// Places one blip per skill at a FIXED angle (360° / count apart, so however
-// many skills there are they stay evenly spaced) alternating between two
-// radii so neighboring blips/labels don't collide. Nothing here is random —
-// same layout every load. Radii are kept well inside the outer ring (r=90)
-// because at cardinal angles (due east/west) a label's text grows in a
-// direction that's purely radial, not tangential — the longest label at the
-// outer radius, at a cardinal angle, must still land inside r=90.
-const BLIP_INNER_RADIUS = 26
-const BLIP_OUTER_RADIUS = 60
-
-// Fixed, always-valid sample points around the full 4s loop (see below for
-// why these must never depend on any individual blip's own angle).
-const PULSE_SAMPLES = 13
-const PULSE_KEYTIMES = Array.from({ length: PULSE_SAMPLES }, (_, k) => k / (PULSE_SAMPLES - 1))
-const PULSE_KEYTIMES_ATTR = PULSE_KEYTIMES.map(t => t.toFixed(4)).join(';')
-
-// Opacity at each fixed sample time, based on the (wrapped) distance from
-// that sample to this blip's peak — i.e. how close the sweep is to crossing
-// it. Wrapping matters because the loop restarts at 0 every 4s: a blip whose
-// peak sits at angle 0 (like the very first skill) is *also* close to the
-// sweep just before it wraps back around from 360°, at t≈1.
-function pulseValues(peak, width, baseline = 0.15, brightest = 1) {
-  return PULSE_KEYTIMES.map(t => {
-    const raw = Math.abs(t - peak)
-    const wrapped = Math.min(raw, 1 - raw)
-    const intensity = Math.max(0, 1 - wrapped / width)
-    return (baseline + (brightest - baseline) * intensity).toFixed(3)
-  }).join(';')
-}
-
-function generateBlips() {
-  const list = RADAR_SKILLS
-  const count = list.length
-  const slice = 360 / count
-
-  return list.map((skill, i) => {
-    const angle = i * slice
-    const radius = i % 2 === 0 ? BLIP_INNER_RADIUS : BLIP_OUTER_RADIUS
-    const rad = (angle * Math.PI) / 180
-    const x = 110 + radius * Math.sin(rad)
-    const y = 110 - radius * Math.cos(rad)
-    const dx = x - 110
-
-    const peak = angle / 360
-
-    return {
-      name: skill.name,
-      color: skill.color,
-      x, y,
-      r: 2.2,
-      textX: x + (dx >= 0 ? 4.5 : -4.5),
-      textY: y + 2,
-      textAnchor: dx >= 0 ? 'start' : 'end',
-      values: pulseValues(peak, 0.12),
-    }
-  })
-}
-
-// How long one full sweep rotation takes. Drives the spin itself AND the
-// blip highlight timing below — they must match, or highlights drift out of
-// sync with the sweep arm. Change this one value to speed up/slow down both.
-const RADAR_SWEEP_SECONDS = 6
-
-// Radar SVG component
-function RadarViz() {
-  const blips = useMemo(() => generateBlips(), [])
-
-  return (
-    <div className="relative w-56 h-56 md:w-72 md:h-72 flex-shrink-0">
-      <svg
-        viewBox="0 0 220 220"
-        className="w-full h-full"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Grid rings */}
-        {[90, 68, 46, 24].map((r, i) => (
-          <circle
-            key={r}
-            cx="110" cy="110" r={r}
-            fill="none"
-            stroke="rgba(34,211,238,0.08)"
-            strokeWidth="1"
-          />
-        ))}
-        {/* Crosshairs */}
-        <line x1="110" y1="20" x2="110" y2="200" stroke="rgba(34,211,238,0.06)" strokeWidth="1"/>
-        <line x1="20" y1="110" x2="200" y2="110" stroke="rgba(34,211,238,0.06)" strokeWidth="1"/>
-
-        {/* Sweep trail: conic gradient simulation */}
-        <defs>
-          <radialGradient id="sweep-fade" cx="50%" cy="50%">
-            <stop offset="0%" stopColor="rgba(34,211,238,0)" />
-            <stop offset="100%" stopColor="rgba(34,211,238,0.18)" />
-          </radialGradient>
-        </defs>
-
-        {/* Spinning sweep group */}
-        <g
-          style={{
-            animation: `radarSpin ${RADAR_SWEEP_SECONDS}s linear infinite`,
-            transformOrigin: '110px 110px',
-          }}
-        >
-          {/* Sweep arm — reaches r=90 to cover the full outer ring */}
-          <line
-            x1="110" y1="110" x2="110" y2="20"
-            stroke="#22D3EE"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            opacity="0.8"
-          />
-          {/* Sweep arc highlight */}
-          <path
-            d="M110,110 L110,20 A90,90 0 0,1 143,26 Z"
-            fill="rgba(34,211,238,0.06)"
-          />
-        </g>
-
-        {/* Center dot */}
-        <circle cx="110" cy="110" r="3.5" fill="#22D3EE" />
-        <circle cx="110" cy="110" r="6" fill="none" stroke="rgba(34,211,238,0.35)" strokeWidth="1"/>
-
-        {/* Detection blips — fixed positions, lights up only when the sweep crosses it */}
-        {blips.map(b => (
-          <Fragment key={b.name}>
-            <circle cx={b.x} cy={b.y} r={b.r} fill={b.color} opacity="0.15">
-              <animate attributeName="opacity" values={b.values} keyTimes={PULSE_KEYTIMES_ATTR} dur={`${RADAR_SWEEP_SECONDS}s`} repeatCount="indefinite"/>
-            </circle>
-            <text x={b.textX} y={b.textY} textAnchor={b.textAnchor} fontSize="9" letterSpacing=".3" fill={b.color} opacity="0.15">
-              {b.name.toUpperCase()}
-              <animate attributeName="opacity" values={b.values} keyTimes={PULSE_KEYTIMES_ATTR} dur={`${RADAR_SWEEP_SECONDS}s`} repeatCount="indefinite"/>
-            </text>
-          </Fragment>
-        ))}
-      </svg>
-
-      {/* Outer glow ring */}
-      <div className="absolute inset-0 rounded-full border border-cyan-400/10" />
-    </div>
-  )
-}
-
 export default function Hero() {
   const hf = useHFStats('dronefreak')
   const gh = useGitHubTotalStars('dronefreak')
@@ -265,54 +121,76 @@ export default function Hero() {
   // loading: true  → value pulses while the API call is in flight
   // loading: false → static, never pulses
   // Fallback strings show instantly and are replaced once each API resolves.
-  const stats = [
+  // Grouped by meaning so the ribbon reads Career | Hugging Face | GitHub.
+  const statGroups = [
     {
-      value: fmtCount(hf.modelCount, '35+'),
-      label: 'HuggingFace Models',
-      href: 'https://huggingface.co/dronefreak',
-      loading: !hf.loaded,
+      title: 'Career',
+      items: [
+        {
+          value: '8+',
+          label: 'Years',
+          href: 'https://www.linkedin.com/in/sksaksena',
+          loading: false,
+        },
+        {
+          value: `${authorStats.publications}+`, // single source of truth: src/data/publications.js
+          label: 'Publications',
+          href: 'https://scholar.google.com/citations?user=BxQ0KDEAAAAJ',
+          loading: false,
+        },
+        {
+          value: `${patents.length}`, // no "+": exactly the published patents in src/data/publications.js
+          label: 'Patents',
+          href: '#patents', // on-page anchor to the Patents cards
+          loading: false,
+        },
+      ],
     },
     {
-      value: fmtCount(hf.totalDownloads, '35+'),
-      label: 'HuggingFace Downloads',
-      href: 'https://huggingface.co/dronefreak',
-      loading: !hf.loaded,
+      title: 'Hugging Face',
+      items: [
+        {
+          value: fmtCount(hf.modelCount, '35+'),
+          label: 'Models',
+          href: 'https://huggingface.co/dronefreak',
+          loading: !hf.loaded,
+        },
+        {
+          value: fmtFull(hf.totalDownloads, '35+'),
+          label: 'Downloads',
+          href: 'https://huggingface.co/dronefreak',
+          loading: !hf.loaded,
+        },
+        {
+          value: fmtCount(hf.totalLikes, '35+'),
+          label: 'Likes',
+          href: 'https://huggingface.co/dronefreak',
+          loading: !hf.loaded,
+        },
+      ],
     },
     {
-      value: fmtCount(hf.totalLikes, '35+'),
-      label: 'HuggingFace Likes',
-      href: 'https://huggingface.co/dronefreak',
-      loading: !hf.loaded,
-    },
-    {
-      value: fmtCount(gh.totalStars, '700+'),
-      label: 'GitHub Stars',
-      href: 'https://github.com/dronefreak',
-      loading: !gh.loaded,
-    },
-    {
-      value: fmtCount(gh.totalForks, '700+'),
-      label: 'GitHub Forks',
-      href: 'https://github.com/dronefreak',
-      loading: !gh.loaded,
-    },
-    {
-      value: fmtCount(gh.repoCount, '700+'),
-      label: 'GitHub Repos',
-      href: 'https://github.com/dronefreak',
-      loading: !gh.loaded,
-    },
-    {
-      value: '10+',
-      label: 'Publications',
-      href: 'https://scholar.google.com/citations?user=BxQ0KDEAAAAJ',
-      loading: false,
-    },
-    {
-      value: '6+',
-      label: 'Years in Perception',
-      href: null,
-      loading: false,
+      title: 'GitHub',
+      items: [
+        {
+          value: fmtCount(gh.totalStars, '700+'),
+          label: 'Stars',
+          href: 'https://github.com/dronefreak',
+          loading: !gh.loaded,
+        },
+        {
+          value: fmtCount(gh.totalForks, '700+'),
+          label: 'Forks',
+          href: 'https://github.com/dronefreak',
+          loading: !gh.loaded,
+        },
+        {
+          value: fmtCount(gh.repoCount, '30+'),
+          label: 'Repos',
+          href: 'https://github.com/dronefreak?tab=repositories',
+          loading: !gh.loaded,
+        },
+      ],
     },
   ]
 
@@ -340,7 +218,7 @@ export default function Hero() {
       />
 
       <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-16 w-full">
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] items-center gap-10 md:gap-12">
 
           {/* Left: text content */}
           <div className="flex-1 max-w-2xl">
@@ -354,7 +232,7 @@ export default function Hero() {
                 <span
                   className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse-dot inline-block"
                 />
-                Functional Safety &nbsp;·&nbsp; Navya Mobility &nbsp;·&nbsp; Paris
+                Perception &nbsp;·&nbsp; Navya Mobility &nbsp;·&nbsp; Paris
               </div>
             </motion.div>
 
@@ -405,7 +283,7 @@ export default function Hero() {
 
             {/* CTAs */}
             <motion.div
-              className="flex flex-wrap gap-3 mb-12"
+              className="flex flex-wrap gap-3 mb-9"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
@@ -429,80 +307,96 @@ export default function Hero() {
               </a>
             </motion.div>
 
+
+            {/* Social links */}
+            <motion.div
+              className="flex flex-wrap items-center gap-y-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.55 }}
+            >
+              {socialLinks.map((link, i) => (
+                <Fragment key={link.label}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-1.5 pr-1.5 whitespace-nowrap text-white/45 hover:text-cyan-400 transition-colors duration-200"
+                  >
+                    <span
+                      className={
+                        link.label === 'HuggingFace'
+                          ? 'block opacity-45 group-hover:opacity-100 transition-opacity duration-200'
+                          : 'block'
+                      }
+                    >
+                      {link.icon}
+                    </span>
+                    <span className="font-body text-xs sm:text-sm">{link.label}</span>
+                  </a>
+                  {i < socialLinks.length - 1 && (
+                    <span className="text-white/20 select-none pr-1.5" aria-hidden="true">|</span>
+                  )}
+                </Fragment>
+              ))}
+            </motion.div>
           </div>
 
-          {/* Right: Radar viz */}
+          {/* Right: instrument panel — radar with live stats underneath */}
           <motion.div
-            className="flex-shrink-0"
-            initial={{ opacity: 0, scale: 0.9 }}
+            className="glass-card p-5 md:p-6 w-full md:max-w-lg md:justify-self-end"
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
           >
-            <RadarViz />
+            <div className="flex items-center justify-between mb-2 font-display font-semibold text-[10px] tracking-[0.14em] uppercase">
+              <span className="text-white/35">Skills &amp; stats</span>
+              <span className="flex items-center gap-1.5 text-cyan-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse-dot inline-block" />
+                Live
+              </span>
+            </div>
+
+            <LidarViz className="w-full aspect-[1/0.76]" />
+
+            {/* One row per group: label outside the tiles (beside them on wide screens, above on narrow),
+                simple one-word labels inside. Each tile still links out. */}
+            <div className="mt-4 space-y-3">
+              {statGroups.map(group => (
+                <div
+                  key={group.title}
+                  className="grid grid-cols-3 gap-2 lg:grid-cols-[84px_repeat(3,minmax(0,1fr))] lg:items-center"
+                >
+                  <h3 className="col-span-3 lg:col-span-1 font-display font-semibold text-[10px] tracking-[0.14em] uppercase text-cyan-400">
+                    {group.title}
+                  </h3>
+                  {group.items.map(stat => (
+                    <a
+                      key={stat.label}
+                      href={stat.href || undefined}
+                      target={stat.href && !stat.href.startsWith('#') ? '_blank' : undefined}
+                      rel={stat.href && !stat.href.startsWith('#') ? 'noopener noreferrer' : undefined}
+                      className={`group flex flex-col justify-center text-center rounded-lg border border-cyan-400/[0.12] bg-white/[0.02] px-1.5 py-3 transition-colors duration-200 ${
+                        stat.href ? 'cursor-pointer hover:border-cyan-400/30 hover:bg-cyan-400/[0.04]' : 'cursor-default'
+                      }`}
+                    >
+                      <div
+                        className={`font-display font-bold text-lg xl:text-xl leading-tight tabular-nums text-gradient-cyan group-hover:scale-105 transition-transform duration-200 ${
+                          stat.loading ? 'animate-pulse opacity-60' : ''
+                        }`}
+                      >
+                        {stat.value}
+                      </div>
+                      <div className="font-body text-[9px] text-white/40 uppercase tracking-wider leading-tight mt-1">
+                        {stat.label}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              ))}
+            </div>
           </motion.div>
         </div>
-
-        {/* Social links */}
-        <motion.div
-          className="mt-12 flex flex-nowrap justify-center items-center w-full overflow-x-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.55 }}
-        >
-          {socialLinks.map((link, i) => (
-            <Fragment key={link.label}>
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-1.5 px-1.5 whitespace-nowrap text-white/45 hover:text-cyan-400 transition-colors duration-200"
-              >
-                <span
-                  className={
-                    link.label === 'HuggingFace'
-                      ? 'block opacity-45 group-hover:opacity-100 transition-opacity duration-200'
-                      : 'block'
-                  }
-                >
-                  {link.icon}
-                </span>
-                <span className="font-body text-xs sm:text-sm">{link.label}</span>
-              </a>
-              {i < socialLinks.length - 1 && (
-                <span className="text-white/20 select-none" aria-hidden="true">|</span>
-              )}
-            </Fragment>
-          ))}
-        </motion.div>
-
-        {/* Stats row */}
-        <motion.div
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
-        >
-          {stats.map((stat, i) => (
-            <a
-              key={stat.label}
-              href={stat.href || undefined}
-              target={stat.href ? '_blank' : undefined}
-              rel={stat.href ? 'noopener noreferrer' : undefined}
-              className={`glass-card p-5 text-center group ${stat.href ? 'glass-card-hover cursor-pointer' : 'cursor-default'}`}
-            >
-              <div
-                className={`font-display font-bold text-3xl text-gradient-cyan mb-1 group-hover:scale-105 transition-transform duration-200 ${
-                  stat.loading ? 'animate-pulse opacity-60' : ''
-                }`}
-              >
-                {stat.value}
-              </div>
-              <div className="font-body text-xs text-white/40 uppercase tracking-wider">
-                {stat.label}
-              </div>
-            </a>
-          ))}
-        </motion.div>
       </div>
 
       {/* Scroll indicator */}

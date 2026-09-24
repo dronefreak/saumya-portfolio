@@ -89,6 +89,7 @@ export function useGitHubTotalStars(username) {
     totalStars: null,
     totalForks: null,
     repoCount: null,
+    lastPush: null, // ISO time of the most recent push to any of the user's own repos
     loaded: false,
   })
 
@@ -121,6 +122,7 @@ export function useGitHubTotalStars(username) {
           totalStars: repos.reduce((acc, r) => acc + (r.stargazers_count || 0), 0),
           totalForks:  repos.reduce((acc, r) => acc + (r.forks_count || 0), 0),
           repoCount:   repos.length,
+          lastPush:    repos.filter(r => !r.fork).reduce((latest, r) => (r.pushed_at > latest ? r.pushed_at : latest), '') || null,
         }
         setCache(cacheKey, fresh)
         setStats({ ...fresh, loaded: true })

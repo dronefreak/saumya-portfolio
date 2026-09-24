@@ -1,13 +1,34 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useHFStats } from '../hooks/useHFStats'
-import { useGitHubTotalStars } from '../hooks/useGitHubStats'
+import { useGitHubTotalStars, useGitHubProfile } from '../hooks/useGitHubStats'
 
 // Formats a live number — returns fallback string while still loading (null)
 function fmtCount(n, fallback) {
   if (n === null || n === undefined) return fallback
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K+`
   return `${n}`
+}
+
+// Full number with thousands separators (e.g. 116,131) — no K+ rounding
+function fmtFull(n, fallback) {
+  if (n === null || n === undefined) return fallback
+  return n.toLocaleString('en-US')
+}
+
+// A number inside a stats line, a touch brighter than the label text around it
+function Num({ children }) {
+  return <span className="text-white/70 tabular-nums">{children}</span>
+}
+
+// "Active today" style freshness label from an ISO timestamp; null when it has been quiet for a month
+function activityLabel(iso) {
+  if (!iso) return null
+  const hours = (Date.now() - new Date(iso).getTime()) / 36e5
+  if (hours < 24) return 'Active today'
+  if (hours < 24 * 7) return 'Active this week'
+  if (hours < 24 * 30) return 'Active this month'
+  return null
 }
 
 const contactLinks = [
@@ -106,14 +127,27 @@ export default function Contact() {
 
   const gh = useGitHubTotalStars('dronefreak')
   const hf = useHFStats('dronefreak')
+  const ghProfile = useGitHubProfile('dronefreak')
+  const activity = activityLabel(gh.lastPush)
 
   const liveDescriptions = {
-    GitHub: `${fmtCount(gh.repoCount, '24')} Repos · ${fmtCount(gh.totalStars, '700+')} Stars · Open to collaboration`,
-    'Hugging Face': `${fmtCount(hf.modelCount, '35+')} Models · ${fmtCount(hf.totalDownloads, '0')} Downloads · ${fmtCount(hf.datasetCount, '1')} Datasets · ${fmtCount(hf.spaceCount, '2')} Spaces`,
+    GitHub: (
+      <>
+        <Num>{fmtCount(gh.repoCount, '30+')}</Num> Repos · <Num>{fmtCount(gh.totalStars, '700+')}</Num> Stars ·{' '}
+        <Num>{fmtCount(gh.totalForks, '200+')}</Num> Forks · <Num>{fmtCount(ghProfile?.followers, '80+')}</Num> Followers ·
+        Open to collaboration
+      </>
+    ),
+    'Hugging Face': (
+      <>
+        <Num>{fmtCount(hf.modelCount, '35+')}</Num> Models · <Num>{fmtFull(hf.totalDownloads, '0')}</Num> Downloads ·{' '}
+        <Num>{fmtCount(hf.followers, '40+')}</Num> Followers · <Num>{fmtCount(hf.discussions, '140+')}</Num> Discussions
+      </>
+    ),
   }
 
   return (
-    <section id="contact" className="relative py-28">
+    <section id="contact" className="relative py-16 md:py-24">
       {/* Background accent */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -176,8 +210,17 @@ export default function Contact() {
                   )}
                 </span>
                 <div className="min-w-0">
-                  <div className="font-display font-semibold text-sm text-white/85 mb-0.5">
-                    {link.platform}
+                  <div className="font-display font-semibold text-sm text-white/85 mb-0.5 flex items-center justify-between gap-2">
+                    <span>{link.platform}</span>
+                    {link.platform === 'GitHub' && activity && (
+                      <span className="inline-flex items-center gap-1.5 font-body font-medium text-[10px] text-emerald-400 whitespace-nowrap">
+                        <span
+                          className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot"
+                          style={{ boxShadow: '0 0 8px #34D399' }}
+                        />
+                        {activity}
+                      </span>
+                    )}
                   </div>
                   <div className="font-body text-xs text-cyan-400/70 mb-1.5 truncate">
                     {link.handle}

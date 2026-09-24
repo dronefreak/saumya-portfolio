@@ -75,7 +75,7 @@ export default function LiveDemos() {
   const headInView = useInView(headRef, { once: true, amount: 0.4 })
 
   return (
-    <section id="demos" className="relative py-28">
+    <section id="demos" className="relative py-16 md:py-24">
       {/* Section background accent */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -87,7 +87,7 @@ export default function LiveDemos() {
       <div className="relative max-w-6xl mx-auto px-6">
         <motion.div
           ref={headRef}
-          className="mb-16"
+          className="mb-12"
           initial={{ opacity: 0, y: 24 }}
           animate={headInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}

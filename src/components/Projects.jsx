@@ -221,12 +221,12 @@ export default function Projects() {
   const headInView = useInView(headRef, { once: true, amount: 0.4 })
 
   return (
-    <section id="projects" className="relative py-28">
+    <section id="projects" className="relative py-16 md:py-24">
       <div className="max-w-6xl mx-auto px-6">
 
         <motion.div
           ref={headRef}
-          className="mb-16"
+          className="mb-12"
           initial={{ opacity: 0, y: 24 }}
           animate={headInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}

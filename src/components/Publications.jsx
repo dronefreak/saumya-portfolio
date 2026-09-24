@@ -301,12 +301,12 @@ export default function Publications() {
   const headInView = useInView(headRef, { once: true, amount: 0.4 })
 
   return (
-    <section id="publications" className="relative py-28">
+    <section id="publications" className="relative py-16 md:py-24">
       <div className="max-w-5xl mx-auto px-6">
 
         <motion.div
           ref={headRef}
-          className="mb-14"
+          className="mb-12"
           initial={{ opacity: 0, y: 24 }}
           animate={headInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -348,7 +348,7 @@ export default function Publications() {
         </div>
 
         {patents.length > 0 && (
-          <div className="mt-14">
+          <div id="patents" className="mt-14 scroll-mt-24">
             <span className="section-label block mb-5">Patents</span>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {patents.map((p, i) => (

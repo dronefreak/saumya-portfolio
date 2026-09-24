@@ -118,7 +118,7 @@ export const publications = [
 // single live API call for the merged totals — these are the deduplicated numbers.
 export const authorStats = {
   publications: 14, // These are taken manually from Google Scholar
-  citations: 350, // These are taken manually from Google Scholar
+  citations: 357, // These are taken manually from Google Scholar
   hIndex: 8, // These are taken manually from Google Scholar
   i10Index: 7, // These are taken manually from Google Scholar
   // highlyInfluentialCitations: 46, // Not relevant

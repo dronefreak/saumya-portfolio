@@ -115,7 +115,7 @@ function StoryStrip() {
   }
 
   return (
-    <div ref={ref} className="hidden md:block relative mb-24">
+    <div ref={ref} className="hidden md:block relative mb-16">
       {/* Spine — spans first-to-last node centre, gradient through the node colours */}
       <motion.div
         className="absolute top-1/2 h-px -translate-y-1/2 origin-left"
@@ -226,13 +226,13 @@ export default function Story() {
   const headInView = useInView(headRef, { once: true, amount: 0.4 })
 
   return (
-    <section id="story" className="relative py-28">
+    <section id="story" className="relative py-16 md:py-24">
       <div className="max-w-4xl mx-auto px-6">
 
         {/* Header */}
         <motion.div
           ref={headRef}
-          className="text-center mb-20"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 24 }}
           animate={headInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}

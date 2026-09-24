@@ -53,10 +53,12 @@ async function fetchAllHF(url) {
 const EXPAND_ALL_TIME = 'expand[]=likes&expand[]=downloads&expand[]=downloadsAllTime'
 
 async function fetchHFAggregate(username) {
-  const [models, datasets, spaces] = await Promise.all([
+  const [models, datasets, spaces, overview] = await Promise.all([
     fetchAllHF(`${HF_API}/models?author=${username}&limit=100&${EXPAND_ALL_TIME}`),
     fetchAllHF(`${HF_API}/datasets?author=${username}&limit=100&${EXPAND_ALL_TIME}`),
     fetchAllHF(`${HF_API}/spaces?author=${username}&limit=100`),
+    // Followers + discussions only exist on the user overview; never let it break the rest.
+    fetch(`${HF_API}/users/${username}/overview`).then(r => (r.ok ? r.json() : null)).catch(() => null),
   ])
 
   const totalLikes =
@@ -74,6 +76,8 @@ async function fetchHFAggregate(username) {
     modelCount: models.length,
     datasetCount: datasets.length,
     spaceCount: spaces.length,
+    followers: overview?.numFollowers ?? null,
+    discussions: overview?.numDiscussions ?? null,
     // Per-item breakdown if you ever want to render a leaderboard
     breakdown: {
       models: models
@@ -111,6 +115,8 @@ export function useHFStats(username) {
     modelCount: null,
     datasetCount: null,
     spaceCount: null,
+    followers: null,
+    discussions: null,
     breakdown: null,
     loaded: false,
     error: null,
