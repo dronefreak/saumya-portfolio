@@ -3,7 +3,7 @@ import { useState, useEffect, Fragment } from 'react'
 import { TypeAnimation } from 'react-type-animation'
 import { useHFStats } from '../hooks/useHFStats'
 import { useGitHubTotalStars } from '../hooks/useGitHubStats'
-import LidarViz from './LidarViz'
+import SkillConstellation from './SkillConstellation'
 import { authorStats, patents } from '../data/publications'
 
 // Formats a live number — returns fallback string while still loading (null)
@@ -357,7 +357,7 @@ export default function Hero() {
               </span>
             </div>
 
-            <LidarViz className="w-full aspect-[1/0.76]" />
+            <SkillConstellation className="w-full aspect-[1/0.76]" />
 
             {/* One row per group: label outside the tiles (beside them on wide screens, above on narrow),
                 simple one-word labels inside. Each tile still links out. */}

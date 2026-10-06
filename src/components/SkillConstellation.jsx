@@ -7,25 +7,31 @@ import { useCanvasLoop } from '../hooks/useCanvasLoop'
 // Positions are normalised (0–1) and hand-placed in loose clusters (ML, edge deploy, robotics, MLOps).
 
 const LAYOUT = {
-  Python: [0.48, 0.3],
-  PyTorch: [0.26, 0.2],
-  TensorFlow: [0.7, 0.2],
-  NumPy: [0.3, 0.46],
-  ONNX: [0.5, 0.56],
-  TensorRT: [0.28, 0.74],
-  ROS: [0.09, 0.52],
-  RTMaps: [0.14, 0.88],
-  MLflow: [0.72, 0.5],
-  Jenkins: [0.9, 0.72],
-  Git: [0.66, 0.84],
+  // Train (top)
+  Python: [0.44, 0.22],
+  PyTorch: [0.24, 0.14],
+  TensorFlow: [0.64, 0.14],
+  NumPy: [0.28, 0.36],
+  // Optimise (centre) — the hinge between Train and Integrate, kept close to both
+  ONNX: [0.46, 0.46],
+  TensorRT: [0.34, 0.62],
+  // Integrate (bottom-left) — pulled in closer so the Optimise → Integrate edges stay short
+  ROS: [0.16, 0.58],
+  RTMaps: [0.22, 0.8],
+  // MLOps (right)
+  MLflow: [0.68, 0.4],
+  'Weights & Biases': [0.84, 0.3],
+  Jenkins: [0.84, 0.58],
+  Git: [0.6, 0.72],
 }
 
 const LINKS = [
   ['Python', 'PyTorch'], ['Python', 'TensorFlow'], ['Python', 'NumPy'], ['PyTorch', 'NumPy'],
   ['PyTorch', 'ONNX'], ['TensorFlow', 'ONNX'], ['ONNX', 'TensorRT'],
-  ['TensorRT', 'ROS'], ['ROS', 'RTMaps'], ['Python', 'ROS'], ['TensorRT', 'RTMaps'],
+  ['TensorRT', 'ROS'], ['ROS', 'RTMaps'], ['TensorRT', 'RTMaps'],
   ['PyTorch', 'MLflow'], ['TensorFlow', 'MLflow'], ['NumPy', 'MLflow'],
   ['MLflow', 'Jenkins'], ['Jenkins', 'Git'], ['MLflow', 'Git'],
+  ['MLflow', 'Weights & Biases'], ['Weights & Biases', 'Jenkins'],
 ]
 
 export default function SkillConstellation({ className = '' }) {
