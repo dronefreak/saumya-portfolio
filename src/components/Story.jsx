@@ -237,10 +237,10 @@ export default function Story() {
           animate={headInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          <span className="section-label block mb-4">The Arc</span>
+          <span className="section-label block mb-4">Experience</span>
           <h2 className="font-display font-bold text-4xl md:text-5xl text-white leading-tight tracking-tight mb-5">
-            Small hardware.{' '}
-            <span className="text-gradient-cyan">Big ideas.</span>
+            From drones{' '}
+            <span className="text-gradient-cyan">to driverless vehicles.</span>
           </h2>
           <p className="font-body text-base text-white/45 max-w-xl mx-auto leading-relaxed mb-4">
             Eight years. Still curious.

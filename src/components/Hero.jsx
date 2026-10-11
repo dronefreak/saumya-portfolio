@@ -127,7 +127,7 @@ export default function Hero() {
       title: 'Career',
       items: [
         {
-          value: '8+',
+          value: '6+',
           label: 'Years',
           href: 'https://www.linkedin.com/in/sksaksena',
           loading: false,
@@ -243,9 +243,9 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
             >
-              Perception that{' '}
+              Building a perception stack{' '}
               <span className="text-gradient-cyan block sm:inline">
-                keeps machines safe.
+                that matters.
               </span>
             </motion.h1>
 
