@@ -116,8 +116,15 @@ export const publications = [
 // S2 splits this author across two profiles due to name-variant disambiguation
 // ("Saumya Kumaar Saksena" id 40990479, "Saumya Kumaar" id 144838690), so there's no
 // single live API call for the merged totals — these are the deduplicated numbers.
+//
+// `publications` below is hand-cleaned from Google Scholar's own "Articles 1–17" count:
+// 17 minus 1 (a duplicate listing of the same helicopter-dynamics paper under two author
+// orderings) minus 1 (an IEEE ICSIP 2018 *proceedings volume* entry, not a paper you authored)
+// = 15. Still included: the MSc thesis and the EP patent, since Scholar lists both as
+// publications in their own right (the patent is also counted separately in `patents` below —
+// that's intentional, Scholar and the Patents section are two different counts).
 export const authorStats = {
-  publications: 14, // These are taken manually from Google Scholar
+  publications: 15,
   citations: 362, // These are taken manually from Google Scholar
   hIndex: 8, // These are taken manually from Google Scholar
   i10Index: 7, // These are taken manually from Google Scholar
