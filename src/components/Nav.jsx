@@ -48,19 +48,19 @@ export default function Nav() {
         <a
           href="#"
           onClick={e => handleLink(e, '#hero')}
-          className="font-display font-bold text-lg sm:text-xl md:text-2xl tracking-tight text-gradient-cyan whitespace-nowrap"
+          className="font-display font-bold text-lg sm:text-xl lg:text-2xl tracking-tight text-gradient-cyan whitespace-nowrap"
         >
           Saumya Saksena
         </a>
 
         {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8">
+        <ul className="hidden lg:flex items-center gap-6">
           {links.map(link => (
             <li key={link.href}>
               <a
                 href={link.href}
                 onClick={e => handleLink(e, link.href)}
-                className="font-body text-sm text-white/50 hover:text-white/90 transition-colors duration-200"
+                className="font-body text-sm text-white/50 hover:text-white/90 transition-colors duration-200 whitespace-nowrap"
               >
                 {link.label}
               </a>
@@ -69,7 +69,7 @@ export default function Nav() {
         </ul>
 
         {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2.5">
           <a
             href="/resume.pdf"
             download
@@ -91,7 +91,7 @@ export default function Nav() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setOpen(o => !o)}
-          className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5"
+          className="lg:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5"
           aria-label={open ? 'Close menu' : 'Open menu'}
         >
           <span className={`block w-5 h-0.5 bg-white/70 transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`} />
@@ -104,7 +104,7 @@ export default function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="md:hidden bg-navy-900/95 backdrop-blur-xl border-b border-white/[0.06]"
+            className="lg:hidden bg-navy-900/95 backdrop-blur-xl border-b border-white/[0.06]"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}

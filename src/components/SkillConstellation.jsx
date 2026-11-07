@@ -58,13 +58,18 @@ export default function SkillConstellation({ className = '' }) {
   )
 
   const { boxRef, canvasRef } = useCanvasLoop((ctx, W, H, t) => {
+    // Node size, glow and label text are fixed px — scale them with the canvas, or a narrower panel
+    // (e.g. tablet widths) keeps full-size nodes/text while the normalised 0-1 layout shrinks the
+    // spacing between them, and everything collides. 480px is the width this layout was tuned at.
+    const scale = Math.max(0.62, Math.min(1, W / 480))
+
     const pos = nodes.map((n, i) => [
       n.fx * W + Math.sin(t * 0.0006 + i * 1.7) * 6,
       n.fy * H + Math.cos(t * 0.0005 + i * 2.3) * 6,
     ])
 
     let hot = -1
-    let best = 34
+    let best = 34 * scale
     const { x: mx, y: my } = hover.current
     pos.forEach((p, i) => {
       const d = Math.hypot(p[0] - mx, p[1] - my)
@@ -99,11 +104,11 @@ export default function SkillConstellation({ className = '' }) {
       }
     })
 
-    ctx.font = '500 12px "Space Grotesk", Inter, system-ui, sans-serif'
+    ctx.font = `500 ${Math.max(9, 12 * scale).toFixed(1)}px "Space Grotesk", Inter, system-ui, sans-serif`
     ctx.textBaseline = 'middle'
     nodes.forEach((n, i) => {
       const [x, y] = pos[i]
-      const r = i === hot ? 17 : 14
+      const r = (i === hot ? 17 : 14) * scale
       ctx.globalAlpha = hot >= 0 && !lit.has(i) ? 0.3 : 1
 
       const g = ctx.createRadialGradient(x, y, 0, x, y, r * 2.6)
@@ -116,7 +121,7 @@ export default function SkillConstellation({ className = '' }) {
 
       ctx.fillStyle = '#0B1626'
       ctx.strokeStyle = n.color
-      ctx.lineWidth = 1.5
+      ctx.lineWidth = Math.max(1, 1.5 * scale)
       ctx.beginPath()
       ctx.arc(x, y, r, 0, Math.PI * 2)
       ctx.fill()
@@ -139,7 +144,7 @@ export default function SkillConstellation({ className = '' }) {
       const left = n.fx > 0.72
       ctx.textAlign = left ? 'right' : 'left'
       ctx.fillStyle = i === hot ? '#F0F9FF' : n.color
-      ctx.fillText(n.name, x + (left ? -(r + 8) : r + 8), y)
+      ctx.fillText(n.name, x + (left ? -(r + 8 * scale) : r + 8 * scale), y)
       ctx.globalAlpha = 1
     })
   })

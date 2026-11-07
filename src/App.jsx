@@ -1,7 +1,6 @@
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Story from './components/Story'
-import Skills from './components/Skills'
 import Projects from './components/Projects'
 import LiveDemos from './components/LiveDemos'
 import Publications from './components/Publications'
@@ -15,7 +14,6 @@ export default function App() {
       <main>
         <Hero />
         <Story />
-        <Skills />
         <Projects />
         <LiveDemos />
         <Publications />

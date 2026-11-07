@@ -59,8 +59,8 @@ export const skills = [
   },
 ]
 
-// Skills without icon art (yet). The hero's LiDAR cloud and the Toolkit constellation
-// only need a name + color, so they show up there regardless of the tile grid above.
+// Skills without icon art (yet). The hero's constellation only needs a name + color,
+// so they show up there regardless.
 export const extraSkills = [
   { name: 'RTMaps', color: '#4A7BD0' },
   { name: 'ONNX', color: '#F0ABFC' },
@@ -70,38 +70,3 @@ export const extraSkills = [
 
 export const allSkills = [...skills, ...extraSkills]
 
-// Sensor chips in the Toolkit pipeline. Not skills, so they stay out of `allSkills`
-// (and out of the hero's LiDAR cloud), but they get their own colors like the rest.
-export const sensors = [
-  { name: 'Camera', color: '#FF3D81' },
-  { name: 'LiDAR', color: '#22D3EE' },
-]
-
-// The workflow the Toolkit section walks through, left to right (top to bottom on phones).
-// `items` are skill names from `allSkills` (they get that skill's logo and color);
-// anything not found there, like a sensor type, renders as a plain chip.
-export const pipeline = [
-  { stage: 'Sense', blurb: 'the world', items: ['Camera', 'LiDAR'] },
-  { stage: 'Process', blurb: 'the data', items: ['Python', 'NumPy'] },
-  { stage: 'Train', blurb: 'the models', items: ['PyTorch', 'TensorFlow'] },
-  { stage: 'Track', blurb: 'the experiments', items: ['MLflow', 'Weights & Biases'] },
-  { stage: 'Optimise', blurb: 'for the edge', items: ['ONNX', 'TensorRT'] },
-  { stage: 'Ship', blurb: 'the pipelines', items: ['Git', 'Jenkins'] },
-  { stage: 'Integrate', blurb: 'on the robot', items: ['ROS', 'RTMaps'] },
-]
-
-// The step before all the others: reading the literature and benchmarking against it.
-// In the Toolkit section it is the first stage, in gold. An item with an `href` renders as a link.
-export const study = {
-  stage: 'Study',
-  blurb: 'the state of the art',
-  color: '#FF9F1C', // stage accent: node, title and the iterate loop
-  items: [
-    { name: 'Literature review', color: '#FF9F1C' },
-    { name: 'Benchmarking', color: '#FF6FB5' },
-  ],
-}
-
-// The stage the feedback loop returns from, back up to Study ("iterate"): what the experiments
-// teach sends the work back to the literature. Must match a `stage` name in `pipeline`.
-export const loopFrom = 'Integrate'
