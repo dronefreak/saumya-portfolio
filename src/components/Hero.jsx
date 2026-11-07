@@ -156,13 +156,13 @@ export default function Hero() {
           loading: !hf.loaded,
         },
         {
-          value: fmtFull(hf.totalDownloads, '35+'),
-          label: 'Downloads',
+          value: fmtCount(hf.datasetCount, '1'),
+          label: 'Datasets',
           href: 'https://huggingface.co/dronefreak',
           loading: !hf.loaded,
         },
         {
-          value: fmtCount(hf.totalLikes, '35+'),
+          value: fmtCount(hf.totalLikes, '350+'),
           label: 'Likes',
           href: 'https://huggingface.co/dronefreak',
           loading: !hf.loaded,
@@ -365,9 +365,10 @@ export default function Hero() {
               {statGroups.map(group => (
                 <div
                   key={group.title}
-                  className="grid grid-cols-3 gap-2 lg:grid-cols-[84px_repeat(3,minmax(0,1fr))] lg:items-center"
+                  className="hero-stat-row"
+                  style={{ '--cols': group.items.length }}
                 >
-                  <h3 className="col-span-3 lg:col-span-1 font-display font-semibold text-[10px] tracking-[0.14em] uppercase text-cyan-400">
+                  <h3 className="col-span-full lg:col-span-1 font-display font-semibold text-[10px] tracking-[0.14em] uppercase text-cyan-400">
                     {group.title}
                   </h3>
                   {group.items.map(stat => (

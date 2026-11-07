@@ -171,6 +171,21 @@
   transform-origin: 50% 50%;
 }
 
+/* Hero stat rows (Hero.jsx statGroups) — each group can have a different number of tiles
+   (Career/GitHub: 3, Hugging Face: 4), so the column count comes from the --cols custom
+   property set inline per row, rather than a fixed Tailwind grid-cols-N class. */
+.hero-stat-row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: 0.5rem;
+}
+@media (min-width: 1024px) {
+  .hero-stat-row {
+    grid-template-columns: 84px repeat(var(--cols), minmax(0, 1fr));
+    align-items: center;
+  }
+}
+
 /* Radar sweep rotation — kept as raw CSS (not a Tailwind-generated utility)
    so it's always emitted regardless of content scanning. Duration is set
    inline from RADAR_SWEEP_SECONDS in Hero.jsx, not here. */
@@ -183,6 +198,9 @@
    shared rail line. Positioned in percent of its wrapper, which Story.jsx sizes imperatively via
    refs to span the first-to-last marker, so the dot stays correct through layout changes without
    needing its own keyframes recomputed. */
+/* Position, colour and opacity are all driven every frame from Story.jsx (same loop that
+   positions the rail line), so its colour can follow the gradient's real stops as it travels —
+   a CSS-only version can't sample a dynamically-built gradient's colour at an arbitrary point. */
 .story-pulse-dot {
   position: absolute;
   left: 50%;
@@ -190,16 +208,4 @@
   height: 6px;
   margin-left: -3px;
   border-radius: 50%;
-  background: #22D3EE;
-  box-shadow: 0 0 10px 2px rgba(34, 211, 238, 0.8);
-  animation: storyPulse 3.5s ease-in-out infinite;
-}
-@keyframes storyPulse {
-  0% { top: 100%; opacity: 0; }
-  12% { opacity: 1; }
-  88% { opacity: 1; }
-  100% { top: 0%; opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .story-pulse-dot { animation: none; opacity: 0; }
 }

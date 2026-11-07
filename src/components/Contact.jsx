@@ -149,7 +149,8 @@ export default function Contact() {
     'Hugging Face': (
       <>
         <Num>{fmtCount(hf.modelCount, '35+')}</Num> Models · <Num>{fmtFull(hf.totalDownloads, '0')}</Num> Downloads ·{' '}
-        <Num>{fmtCount(hf.followers, '40+')}</Num> Followers · <Num>{fmtCount(hf.discussions, '140+')}</Num> Discussions
+        <Num>{fmtCount(hf.totalLikes, '350+')}</Num> Likes · <Num>{fmtCount(hf.followers, '40+')}</Num> Followers ·{' '}
+        <Num>{fmtCount(hf.discussions, '140+')}</Num> Discussions
       </>
     ),
     // Same numbers as the Research section's stats bar (src/data/publications.js, updated by hand from Scholar)

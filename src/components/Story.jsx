@@ -1,6 +1,22 @@
-import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { story } from '../data/experience'
+
+// Stable reference (module scope, built once) — the strip re-renders on every node hover,
+// and a fresh array literal each time makes Framer Motion treat the pulse's `animate` target
+// as having changed, independently resyncing each animated property and drifting them apart.
+const PULSE_FADE = [0, 1, 1, 0]
+
+// For the vertical rail's pulse: its colour is sampled from the same live gradient stops the
+// line itself uses, which are plain hex strings built at runtime — nothing here can rely on
+// Framer Motion's own colour interpolation, so this does it by hand.
+function lerpRGB(hexA, hexB, t) {
+  const a = parseInt(hexA.slice(1), 16)
+  const b = parseInt(hexB.slice(1), 16)
+  const ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255
+  const br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255
+  return [Math.round(ar + (br - ar) * t), Math.round(ag + (bg - ag) * t), Math.round(ab + (bb - ab) * t)]
+}
 
 const ChevronIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -22,32 +38,50 @@ function StoryNode({ node, index, open, onToggle, markerRef }) {
     <motion.div
       ref={ref}
       id={`story-${node.id}`}
-      className="relative flex items-start gap-0 md:gap-6"
+      className={`relative flex gap-0 md:gap-6 ${open ? 'items-start' : 'items-center'}`}
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.65, delay: 0.1, ease: 'easeOut' }}
     >
       {/* Marker (desktop) — sits on the shared rail the parent draws behind every row, so all
-          five line up in one straight vertical line regardless of how tall each card is. */}
+          five line up in one straight vertical line regardless of how tall each card is.
+          Coloured per node (and diamond for the MSc thesis), matching the at-a-glance strip. */}
       <div className="hidden md:flex flex-col items-center w-10 flex-shrink-0 relative z-10">
         <div
           ref={markerRef}
-          className="w-10 h-10 rounded-full border-2 border-cyan-400/60 bg-navy-900 flex items-center justify-center flex-shrink-0"
+          className={`bg-navy-900 flex items-center justify-center flex-shrink-0 ${
+            node.kind === 'research' ? 'w-8 h-8 rotate-45' : 'w-10 h-10 rounded-full'
+          }`}
+          style={{ border: `2px solid ${node.accent}99` }}
         >
-          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400/70" />
+          <span
+            className={`rounded-full ${node.kind === 'research' ? 'w-2 h-2 -rotate-45' : 'w-2.5 h-2.5'}`}
+            style={{ background: `${node.accent}B3` }}
+          />
           {/* Outer pulse ring — first card is the current role */}
           {index === 0 && (
-            <span className="absolute inset-0 rounded-full border border-cyan-400/30 animate-ping" />
+            <span
+              className={`absolute inset-0 border animate-ping ${node.kind === 'research' ? '' : 'rounded-full'}`}
+              style={{ borderColor: `${node.accent}4D` }}
+            />
           )}
         </div>
       </div>
 
       {/* Mobile node indicator */}
       <div className="flex md:hidden items-center gap-3 mb-4">
-        <div className="w-8 h-8 rounded-full border border-cyan-400/50 bg-navy-900 flex items-center justify-center flex-shrink-0">
-          <span className="w-2 h-2 rounded-full bg-cyan-400/70" />
+        <div
+          className={`bg-navy-900 flex items-center justify-center flex-shrink-0 ${
+            node.kind === 'research' ? 'w-7 h-7 rotate-45' : 'w-8 h-8 rounded-full'
+          }`}
+          style={{ border: `1px solid ${node.accent}80` }}
+        >
+          <span
+            className={`rounded-full ${node.kind === 'research' ? 'w-1.5 h-1.5 -rotate-45' : 'w-2 h-2'}`}
+            style={{ background: `${node.accent}B3` }}
+          />
         </div>
-        <div className="flex-1 h-px bg-cyan-400/20" />
+        <div className="flex-1 h-px" style={{ background: `${node.accent}33` }} />
       </div>
 
       {/* Card */}
@@ -76,7 +110,10 @@ function StoryNode({ node, index, open, onToggle, markerRef }) {
                 {node.role} &nbsp;·&nbsp; {node.location}
               </p>
             </div>
-            <span className="font-body text-xs text-cyan-400/70 border border-cyan-400/20 rounded-full px-3 py-1 flex-shrink-0">
+            <span
+              className="font-body text-xs border rounded-full px-3 py-1 flex-shrink-0"
+              style={{ color: node.accent, borderColor: `${node.accent}33` }}
+            >
               {node.period}
             </span>
           </div>
@@ -143,6 +180,27 @@ function StoryStrip({ onNavigate }) {
   const inView = useInView(ref, { once: true, amount: 0.4 })
   const total = story.length
   const [hovered, setHovered] = useState(null)
+  const reduced = useReducedMotion()
+  // The spine's own gradient runs through these same colours, evenly spaced — Framer Motion
+  // defaults to evenly-spaced keyframes too, so animating `left` and `backgroundColor` through
+  // these same arrays together makes the dot's colour match the gradient at wherever it is,
+  // not just a fixed accent colour riding on top of it.
+  // Memoised (see PULSE_FADE above) so hover-triggered re-renders don't desync the dot's
+  // position from its colour.
+  const accents = useMemo(() => story.map(n => n.accent), [])
+  // Each node's horizontal centre as a % of the full strip width — the same coordinate system
+  // the `total`-column node grid below uses, so the dot lands exactly on each node in turn.
+  const pulsePositions = useMemo(() => accents.map((_, i) => `${((i + 0.5) / total) * 100}%`), [accents, total])
+  const pulseShadows = useMemo(() => accents.map(c => `0 0 10px 2px ${c}CC`), [accents])
+  const pulseTransition = useMemo(
+    () => ({
+      left: { duration: 4, repeat: Infinity, ease: 'linear' },
+      backgroundColor: { duration: 4, repeat: Infinity, ease: 'linear' },
+      boxShadow: { duration: 4, repeat: Infinity, ease: 'linear' },
+      opacity: { duration: 4, repeat: Infinity, ease: 'linear', times: [0, 0.04, 0.96, 1] },
+    }),
+    []
+  )
 
   const jumpTo = (e, id) => {
     e.preventDefault()
@@ -162,12 +220,33 @@ function StoryStrip({ onNavigate }) {
         style={{
           left: `${50 / total}%`,
           right: `${50 / total}%`,
-          background: `linear-gradient(90deg, ${story.map(n => n.accent).join(', ')})`,
+          background: `linear-gradient(90deg, ${accents.join(', ')})`,
         }}
         initial={{ scaleX: 0 }}
         animate={inView ? { scaleX: 1 } : {}}
         transition={{ duration: 1.1, ease: 'easeOut' }}
       />
+
+      {/* Pulse travelling left (2016, oldest) to right (current role) along the spine, its
+          colour matching the gradient at its current position — only once the spine itself
+          has drawn in, so it never animates over an empty line. `left` is a % of the strip's
+          full width (not the spine's own span), same coordinate system the node grid below
+          uses, and vertical centring reuses the spine's own top-1/2/-translate-y-1/2 pair
+          directly rather than a hand-computed pixel offset, so the two can't drift apart. */}
+      {inView && !reduced && (
+        <motion.span
+          className="absolute top-1/2 w-1.5 h-1.5 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          animate={{
+            left: pulsePositions,
+            backgroundColor: accents,
+            boxShadow: pulseShadows,
+            // Fades only right at the loop seam (not at each node) so restarting left:100%→0%
+            // doesn't look like an instant jump, without touching the constant-speed travel.
+            opacity: PULSE_FADE,
+          }}
+          transition={pulseTransition}
+        />
+      )}
 
       <div className="grid" style={{ gridTemplateColumns: `repeat(${total}, minmax(0, 1fr))` }}>
         {story.map((node, i) => {
@@ -283,36 +362,71 @@ export default function Story() {
   const listRef = useRef(null)
   const lineRef = useRef(null)
   const pulseWrapRef = useRef(null)
+  const pulseDotRef = useRef(null)
   const markerRefs = useRef([])
 
   useLayoutEffect(() => {
     const container = listRef.current
     if (!container) return
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const PULSE_MS = 3500
 
-    const measure = () => {
+    const measure = now => {
       const marks = markerRefs.current.filter(Boolean)
       const line = lineRef.current
       const pulseWrap = pulseWrapRef.current
+      const dot = pulseDotRef.current
       if (marks.length < 2 || !line || !pulseWrap) return
       const containerBox = container.getBoundingClientRect()
-      const first = marks[0].getBoundingClientRect()
-      const last = marks[marks.length - 1].getBoundingClientRect()
-      const top = `${first.top - containerBox.top + first.height / 2}px`
-      const height = `${last.top - first.top}px`
-      line.style.top = top
-      line.style.height = height
-      pulseWrap.style.top = top
-      pulseWrap.style.height = height
+      const rects = marks.map(el => el.getBoundingClientRect())
+      const first = rects[0]
+      const last = rects[rects.length - 1]
+      const topPx = first.top - containerBox.top + first.height / 2
+      const heightPx = last.top - first.top
+      line.style.top = `${topPx}px`
+      line.style.height = `${heightPx}px`
+      pulseWrap.style.top = `${topPx}px`
+      pulseWrap.style.height = `${heightPx}px`
+
+      // Each node's own *measured* position along the rail, not an assumed even split — cards
+      // can be taller or shorter than each other once expanded, so this keeps both the line's
+      // colour stops and the pulse's colour lined up with their actual markers instead of
+      // drifting once the rail height isn't evenly divided among them.
+      const fracs = rects.map((r, i) =>
+        heightPx > 0 ? ((r.top - containerBox.top + r.height / 2) - topPx) / heightPx : i / (rects.length - 1)
+      )
+      const colors = orderedStory.map(n => n.accent)
+      line.style.background = `linear-gradient(to bottom, ${fracs.map((f, i) => `${colors[i]} ${(f * 100).toFixed(1)}%`).join(', ')})`
+
+      if (!dot || reduced) return
+      // Pulse: a bottom(oldest)→top(current) loop. `travel` is how far up the rail it's got to
+      // (1 = bottom, 0 = top) — the inverse of the usual "progress" so it reads with the timeline.
+      const t = (now % PULSE_MS) / PULSE_MS
+      const travel = 1 - t
+      let seg = 0
+      while (seg < fracs.length - 2 && travel > fracs[seg + 1]) seg++
+      const span = fracs[seg + 1] - fracs[seg]
+      const localT = span > 0 ? Math.min(1, Math.max(0, (travel - fracs[seg]) / span)) : 0
+      const [r, g, b] = lerpRGB(colors[seg], colors[seg + 1], localT)
+      const opacity = t < 0.04 ? t / 0.04 : t > 0.96 ? (1 - t) / 0.04 : 1
+      dot.style.top = `${travel * 100}%`
+      dot.style.background = `rgb(${r}, ${g}, ${b})`
+      dot.style.boxShadow = `0 0 10px 2px rgba(${r}, ${g}, ${b}, 0.8)`
+      dot.style.opacity = opacity
     }
 
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(container)
-    window.addEventListener('resize', measure)
-    return () => {
-      ro.disconnect()
-      window.removeEventListener('resize', measure)
+    // Measured every frame rather than only on resize/content-size changes: each card's
+    // entrance animation (and the strip's click-to-expand) move the markers via a transform
+    // and a height tween, neither of which ResizeObserver reliably catches mid-flight, so a
+    // one-shot or resize-only measurement goes stale the moment those are still animating.
+    // The cost of a few getBoundingClientRect calls a frame is cheap enough to just always run.
+    let raf
+    const loop = now => {
+      measure(now)
+      raf = requestAnimationFrame(loop)
     }
+    loop(performance.now())
+    return () => cancelAnimationFrame(raf)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -346,7 +460,7 @@ export default function Story() {
         <div className="relative" ref={listRef}>
           <div
             ref={lineRef}
-            className="hidden md:block absolute left-5 w-px z-0 bg-gradient-to-b from-cyan-400/40 via-cyan-400/25 to-cyan-400/10"
+            className="hidden md:block absolute left-5 w-px z-0"
             style={{ top: 0, height: 0 }}
           />
           <div
@@ -354,10 +468,10 @@ export default function Story() {
             className="hidden md:block absolute left-5 w-px z-0"
             style={{ top: 0, height: 0 }}
           >
-            <span className="story-pulse-dot" />
+            <span ref={pulseDotRef} className="story-pulse-dot" style={{ opacity: 0 }} />
           </div>
 
-          <div className="space-y-8 md:space-y-10">
+          <div>
             {orderedStory.map((node, i) => (
               <StoryNode
                 key={node.id}
