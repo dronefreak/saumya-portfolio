@@ -150,14 +150,14 @@ export default function Hero() {
       title: 'Hugging Face',
       items: [
         {
-          value: fmtCount(hf.modelCount, '35+'),
-          label: 'Models',
+          value: fmtCount(hf.datasetCount, '1'),
+          label: 'Datasets',
           href: 'https://huggingface.co/dronefreak',
           loading: !hf.loaded,
         },
         {
-          value: fmtCount(hf.datasetCount, '1'),
-          label: 'Datasets',
+          value: fmtCount(hf.modelCount, '35+'),
+          label: 'Models',
           href: 'https://huggingface.co/dronefreak',
           loading: !hf.loaded,
         },
@@ -173,9 +173,9 @@ export default function Hero() {
       title: 'GitHub',
       items: [
         {
-          value: fmtCount(gh.totalStars, '700+'),
-          label: 'Stars',
-          href: 'https://github.com/dronefreak',
+          value: fmtCount(gh.repoCount, '30+'),
+          label: 'Repos',
+          href: 'https://github.com/dronefreak?tab=repositories',
           loading: !gh.loaded,
         },
         {
@@ -185,9 +185,9 @@ export default function Hero() {
           loading: !gh.loaded,
         },
         {
-          value: fmtCount(gh.repoCount, '30+'),
-          label: 'Repos',
-          href: 'https://github.com/dronefreak?tab=repositories',
+          value: fmtCount(gh.totalStars, '700+'),
+          label: 'Stars',
+          href: 'https://github.com/dronefreak',
           loading: !gh.loaded,
         },
       ],
