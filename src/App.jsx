@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Story from './components/Story'
@@ -20,6 +21,9 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
+      {/* Vercel Web Analytics — page views/visitors, collected only once this is deployed to
+          Vercel; it's a no-op in local dev and on any other host. */}
+      <Analytics />
     </div>
   )
 }
